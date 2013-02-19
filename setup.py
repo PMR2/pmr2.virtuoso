@@ -25,6 +25,9 @@ setup(name='pmr2.virtuoso',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'pmr2.app',
+          'virtuoso',
+          'sqlalchemy>=0.8',
       ],
       entry_points="""
       # -*- Entry points: -*-
