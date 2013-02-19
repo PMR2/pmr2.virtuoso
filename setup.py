@@ -27,7 +27,7 @@ setup(name='pmr2.virtuoso',
           # -*- Extra requirements: -*-
           'pmr2.app',
           'virtuoso',
-          'sqlalchemy>=0.8',
+          'sqlalchemy',
       ],
       entry_points="""
       # -*- Entry points: -*-
