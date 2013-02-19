@@ -1,0 +1,13 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.rdf.browser">
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="pmr2_rdf"
+      class=".workspace.RdfPage"
+      permission="zope2.View"
+      />
+
+</configure>
