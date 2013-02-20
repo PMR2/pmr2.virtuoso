@@ -1,0 +1,25 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="pmr2">
+
+  <adapter 
+      for="pmr2.app.settings.interfaces.IPMR2GlobalSettings"
+      factory=".settings.SettingsFactory"
+      provides=".interfaces.ISettings"
+      />
+
+  <adapter 
+      for="pmr2.app.settings.interfaces.IPMR2GlobalSettings"
+      factory=".settings.SettingsFactory"
+      provides=".interfaces.ISettings"
+      name="pmr2_virtuoso"
+      />
+
+  <utility
+      name="pmr2_virtuoso"
+      component=".settings.SettingsFactory"
+      provides="pmr2.app.settings.interfaces.IPMR2PluggableSettings"
+      />
+
+</configure>

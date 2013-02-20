@@ -5,5 +5,7 @@
     i18n_domain="pmr2.virtuoso">
 
   <include package=".browser" />
+  <include file="profiles.zcml" />
+  <include file="settings.zcml" />
 
 </configure>

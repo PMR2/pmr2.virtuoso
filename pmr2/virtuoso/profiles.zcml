@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="pmr2.app">
+
+  <genericsetup:registerProfile
+      name="default"
+      title="PMR2 Virtuoso Support"
+      directory="profiles/default"
+      description="Add-on for PMR2 for the integration of the Virtuoso RDF store."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+
+</configure>

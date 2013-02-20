@@ -3,6 +3,8 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="pmr2.rdf.browser">
 
+  <include package="Products.CMFCore" file="permissions.zcml" />
+
   <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="pmr2_rdf"
