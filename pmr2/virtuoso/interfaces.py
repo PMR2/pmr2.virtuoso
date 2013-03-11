@@ -31,3 +31,7 @@ class ISettings(zope.interface.Interface):
         default=u'VOS',
         required=False,
     )
+
+
+class IEngine(zope.interface.Interface):
+    pass
