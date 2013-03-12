@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="pmr2">
+
+  <adapter 
+      for=".interfaces.ISettings"
+      provides=".interfaces.IEngine"
+      factory=".engine.Engine"
+      />
+
+</configure>

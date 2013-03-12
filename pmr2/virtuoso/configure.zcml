@@ -6,6 +6,7 @@
 
   <include package=".browser" />
   <include file="profiles.zcml" />
+  <include file="engine.zcml" />
   <include file="settings.zcml" />
 
 </configure>

@@ -33,13 +33,19 @@ class Engine(object):
             'source': quote_url(url), 'graph': quote_url(graph)}
         try:
             lr = conn.execute(sqlstr)
+            fa = lr.fetchall()
+            # assuming the results is in this format.
+            results = [r.values()[0] for r in fa]
             lr.close()
         except:
             logger.error('fail to execute sql', exc_info=1)
         trans.commit()
+        return results
 
     def bulkImportRdf(self, urls, graph='urn:example:pmr2.virtuoso'):
+        results = []
         engine = self._engine
         for source in urls:
-            self.importRdf(source, graph)
-
+            r = self.importRdf(source, graph)
+            results.extend(r)
+        return results

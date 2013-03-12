@@ -12,4 +12,11 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+      name="pmr2_virtuoso_rdf_import"
+      class=".engine.RdfImportForm"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>
