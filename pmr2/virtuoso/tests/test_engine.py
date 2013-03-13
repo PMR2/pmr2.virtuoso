@@ -26,9 +26,12 @@ class DummySQLEngine(object):
     def commit(self):
         pass
 
+    def fetchall(self):
+        return []
+
     def execute(self, stmt):
         self.parent.statements.append(stmt)
-        return StringIO(stmt)
+        return self
 
 
 class BaseEngineTestCase(unittest.TestCase):
