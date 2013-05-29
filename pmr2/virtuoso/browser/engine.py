@@ -3,7 +3,7 @@ import zope.interface
 import zope.schema
 
 import z3c.form
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.z3cform.form import PostForm
