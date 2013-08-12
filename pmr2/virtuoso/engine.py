@@ -25,12 +25,18 @@ class Engine(object):
         source = settings.source
         self._engine = sqlalchemy.create_engine(source)
 
-    def importRdf(self, url, graph='urn:example:pmr2.virtuoso'):
+    def importRdf(self, url, graph=None):
         conn = self._engine.connect()
         trans = conn.begin()
-        sqltmpl = 'sparql load <%(source)s> into graph <%(graph)s>'
-        sqlstr = sqltmpl % {
-            'source': quote_url(url), 'graph': quote_url(graph)}
+
+        sqltmpl = 'sparql load <%(source)s>'
+        params = {'source': quote_url(url)}
+        if graph:
+            sqltmpl = 'sparql load <%(source)s> into graph <%(graph)s>'
+            params['graph'] = quote_url(graph)
+
+        sqlstr = sqltmpl % params
+
         try:
             lr = conn.execute(sqlstr)
             fa = lr.fetchall()
@@ -42,7 +48,7 @@ class Engine(object):
         trans.commit()
         return results
 
-    def bulkImportRdf(self, urls, graph='urn:example:pmr2.virtuoso'):
+    def bulkImportRdf(self, urls, graph=None):
         results = []
         engine = self._engine
         for source in urls:
