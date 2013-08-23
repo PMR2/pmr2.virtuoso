@@ -62,7 +62,7 @@ class BaseEngineTestCase(unittest.TestCase):
         engine.bulkImportRdf([
             'http://example.com/test.rdf',
             'http://example.com/test.rdf?parma=12?pwn"> into graph ',
-        ])
+        ], graph='urn:example:pmr2.virtuoso')
         self.assertEqual(engine.statements, [
             'sparql load <http://example.com/test.rdf> into graph '
             '<urn:example:pmr2.virtuoso>',
