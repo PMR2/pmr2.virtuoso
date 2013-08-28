@@ -13,4 +13,11 @@
       permission="cmf.ManagePortal"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+      name="pmr2_virtuoso_execute"
+      class=".engine.SqlExecuteForm"
+      permission="cmf.ManagePortal"
+      />
+
 </configure>

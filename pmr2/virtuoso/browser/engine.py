@@ -20,6 +20,14 @@ class IRdfImportForm(zope.interface.Interface):
     )
 
 
+class ISqlExecuteForm(zope.interface.Interface):
+
+    stmt = zope.schema.ASCII(
+        title=u'Sql Statement',
+        description=u'Raw SQL/SPARQL statement.',
+    )
+
+
 class RdfImportForm(PostForm):
 
     fields = z3c.form.field.Fields(IRdfImportForm)
@@ -52,3 +60,31 @@ class RdfImportForm(PostForm):
 
         self.omitted = '\n'.join(bads)
         self.imported = '\n'.join(results)
+
+
+class SqlExecuteForm(PostForm):
+
+    fields = z3c.form.field.Fields(ISqlExecuteForm)
+    template = ViewPageTemplateFile('sql_execute_form.pt')
+    ignoreContext = True
+
+    results = None
+
+    @z3c.form.button.buttonAndHandler(u'Execute', name='execute')
+    def handleExecute(self, action):
+        """
+        """
+
+        data, errors = self.extractData()
+        if errors:
+            self.status = self.formErrorsMessage
+            return
+
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
+        engine = zope.component.getAdapter(settings, IEngine)
+        stmt = data['stmt']
+
+        results = engine.execute(stmt)
+
+        self.results = results

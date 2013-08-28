@@ -55,3 +55,20 @@ class Engine(object):
             r = self.importRdf(source, graph)
             results.extend(r)
         return results
+
+    def execute(self, stmt):
+        conn = self._engine.connect()
+        trans = conn.begin()
+
+        try:
+            lr = conn.execute(stmt)
+            fa = lr.fetchall()
+            # assuming the results is in this format.
+            results = [r.values() for r in fa]
+            lr.close()
+        except:
+            logger.error('fail to execute sql', exc_info=1)
+        else:
+            trans.commit()
+            return results
+        return ['# check logs for errors']
