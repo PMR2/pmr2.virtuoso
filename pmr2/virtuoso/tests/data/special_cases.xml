@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ex 
+    xmlns="http://www.example.com/ex#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#"
+    xmlns:pmr2="http://namespace.physiomeproject.org/pmr2#"
+    xmlns:pmr2_note="http://namespace.physiomeproject.org/pmr2/note#"
+    xmlns:ex="http://www.example.com/ex#">
+
+  <rdf:RDF>
+    <rdf:Description rdf:about="">
+      <dc:creator>Tommy</dc:creator>
+      <dc:title>Test XML 3 node</dc:title>
+      <dc:description>
+        A test RDF/XML document
+
+        This is also a multi-line string.
+      </dc:description>
+      <pmr2:annotation rdf:parseType="Resource">
+        <pmr2:type 
+            rdf:resource="http://namespace.physiomeproject.org/pmr2/note#ex"/>
+        <pmr2:fields>
+          <rdf:Bag>
+            <rdf:li rdf:parseType="Resource">
+              <pmr2:field rdf:parseType="Resource">
+                <pmr2:key>key1</pmr2:key>
+                <pmr2:value>value1</pmr2:value>
+              </pmr2:field>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pmr2:field rdf:parseType="Resource">
+                <pmr2:key>key2</pmr2:key>
+                <pmr2:value>value2</pmr2:value>
+              </pmr2:field>
+            </rdf:li>
+          </rdf:Bag>
+        </pmr2:fields>
+      </pmr2:annotation>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <example id="test"/>
+
+  <rdf:RDF>
+    <rdf:Description rdf:about="#test">
+      <dc:title>Test Node</dc:title>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <example id="nothing"/>
+  
+  <rdf:RDF>
+    <rdf:Description rdf:about="">
+      <dc:title>&lt;&gt;&lt;&gt;</dc:title>
+      <dc:rights>Generic Rights statement</dc:rights>
+    </rdf:Description>
+  </rdf:RDF>
+   
+  <rdf:RDF>
+    <rdf:Description rdf:about="http://example.com/external/resource">
+      <dc:title>Title "}&lt;for&gt; an external resource.</dc:title>
+    </rdf:Description>
+  </rdf:RDF>
+  
+</ex>

@@ -26,6 +26,7 @@ setup(name='pmr2.virtuoso',
           'setuptools',
           # -*- Extra requirements: -*-
           'pmr2.app',
+          'pmr2.rdf',
           'virtuoso',
           'sqlalchemy',
       ],
