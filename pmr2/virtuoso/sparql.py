@@ -3,18 +3,16 @@ import rdflib
 
 import pmr2.rdf
 
-empty_iri = rdflib.URIRef('')
-empty_iri_hash = rdflib.URIRef('#')
+iri_replacements = {
+    rdflib.URIRef(''): rdflib.URIRef('#'),
+}
 
 def quote_iri(url):
     return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
 
 def n3(item):
     # handle special cases
-    if item == empty_iri:
-        return empty_iri_hash.n3()
-    
-    return item.n3()
+    return iri_replacements.get(item, item).n3()
 
 def n3_insert(graph):
     for s, p, o in graph.triples((None, None, None)):
