@@ -34,4 +34,25 @@ class ISettings(zope.interface.Interface):
 
 
 class IEngine(zope.interface.Interface):
-    pass
+    """Interface to the engine."""
+
+
+class IWorkspaceRDFInfo(zope.interface.Interface):
+    """
+    Interface to the annotation that tracks the paths that are to be
+    indexed with the RDF Store.
+    """
+
+    paths = zope.schema.List(
+        title=u'RDF Paths',
+        description=u'Paths that will be indexed as RDF.',
+        required=False,
+        value_type=zope.schema.TextLine(title=u'Path'),
+    )
+
+
+class IWorkspaceRDFIndexer(zope.interface.Interface):
+    """
+    The adapter that provides the method that collects the marked RDF
+    paths and indexes the content into the RDF store.
+    """
