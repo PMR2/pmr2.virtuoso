@@ -2,8 +2,10 @@ import zope.interface
 import zope.component
 
 from pmr2.app.workspace.interfaces import IWorkspace, IStorage
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.rdf.base import RdfXmlObject
 
+from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso import sparql
@@ -34,10 +36,10 @@ class WorkspaceRDFIndexer(object):
 
         yield sparql.clear(self.workspace.absolute_url())
 
-        for p in rdfinfo.path:
+        for p in rdfinfo.paths:
             try:
                 contents = storage.file(p)
                 graph = self._mk_rdfgraph(contents)
                 yield sparql.insert(graph, self.workspace.absolute_url())
             except:
-                raise
+                continue

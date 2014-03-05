@@ -47,7 +47,9 @@ class IWorkspaceRDFInfo(zope.interface.Interface):
         title=u'RDF Paths',
         description=u'Paths that will be indexed as RDF.',
         required=False,
-        value_type=zope.schema.TextLine(title=u'Path'),
+        value_type=zope.schema.Choice(
+            vocabulary='pmr2.vocab.manifest',
+        )
     )
 
 
