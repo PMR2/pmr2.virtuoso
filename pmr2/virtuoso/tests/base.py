@@ -1,5 +1,7 @@
 from os.path import dirname, join
 
+import zope.component
+
 from Testing import ZopeTestCase as ztc
 from Zope2.App import zcml
 from Products.Five import fiveconfigure
@@ -12,9 +14,10 @@ import pmr2.testing
 from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
 from pmr2.app.workspace.tests import storage
 
+
 @onsetup
 def setup():
-    import pmr2.annotation.citation
+    import pmr2.virtuoso
     fiveconfigure.debug_mode = True
     zcml.load_config('test.zcml', pmr2.testing)
     zcml.load_config('configure.zcml', pmr2.virtuoso)
@@ -42,8 +45,9 @@ class WorkspaceRDFTestCase(WorkspaceDocTestCase):
 
     def setUp(self):
         super(WorkspaceRDFTestCase, self).setUp()
+        from pmr2.virtuoso.tests.engine import Engine
+        zope.component.provideAdapter(Engine())
         self.portal['workspace'] = WorkspaceContainer()
         w = Workspace('virtuoso_test')
         w.storage = 'dummy_storage' 
         self.portal.workspace['virtuoso_test'] = w
-

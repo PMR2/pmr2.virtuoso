@@ -6,6 +6,9 @@ import zope.interface
 from Zope2.App import zcml
 from Products.Five import fiveconfigure
 
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+
+from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
 from pmr2.virtuoso.workspace import WorkspaceRDFInfo
@@ -57,6 +60,7 @@ class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
         self.assertIn('RDF Paths', result)
         self.assertIn('simple.rdf', result)
         self.assertIn('special_cases.xml', result)
+        self.assertIn('form.buttons.apply', result)
 
     def test_workspace_rdf_edit_form_submit(self):
         context = self.portal.workspace['virtuoso_test']
@@ -71,3 +75,22 @@ class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
         form.update()
 
         self.assertEqual(rdfinfo.paths, ['simple.rdf', 'special_cases.xml'])
+
+    def test_workspace_rdf_edit_form_export(self):
+        context = self.portal.workspace['virtuoso_test']
+        rdfinfo = zope.component.getAdapter(
+            self.portal.workspace['virtuoso_test'], IWorkspaceRDFInfo)
+        rdfinfo.paths = ['simple.rdf', 'special_cases.xml']
+
+        request = TestRequest(form={
+            'form.widgets.paths': ['simple.rdf'],
+            'form.buttons.export_rdf': 1,
+        })
+        form = WorkspaceRDFInfoEditForm(context, request)
+        form.update()
+
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
+        engine = zope.component.getAdapter(settings, IEngine)
+
+        self.assertEqual(len(engine.stmts), 2)

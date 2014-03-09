@@ -43,3 +43,12 @@ class WorkspaceRDFIndexer(object):
                 yield sparql.insert(graph, self.workspace.absolute_url())
             except:
                 continue
+
+    def __call__(self):
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
+        engine = zope.component.getAdapter(settings, IEngine)
+
+        for stmt in self.sparql_generator():
+            engine.execute('SPARQL ' + stmt)
+

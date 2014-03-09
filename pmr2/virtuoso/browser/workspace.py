@@ -7,9 +7,13 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.z3cform.form import EditForm
 
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
+from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
+
+from pmr2.virtuoso.tests.engine import Engine
 
 
 class WorkspaceRDFInfoEditForm(EditForm):
+    z3c.form.form.extends(EditForm)
 
     fields = z3c.form.field.Fields(IWorkspaceRDFInfo)
 
@@ -18,3 +22,14 @@ class WorkspaceRDFInfoEditForm(EditForm):
 
     def getContent(self):
         return zope.component.getAdapter(self.context, IWorkspaceRDFInfo)
+
+    @z3c.form.button.buttonAndHandler(u'Update and Export To RDF Store',
+                                      name='export_rdf')
+    def handleExportRdf(self, action):
+        """
+        Export RDF selected into the RDF store.
+        """
+
+        # also update the values.
+        self.handleApply(self, action)
+        zope.component.getAdapter(self.context, IWorkspaceRDFIndexer)()
