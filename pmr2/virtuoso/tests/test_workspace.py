@@ -36,13 +36,13 @@ class WorkspaceAnnotationTestCase(base.WorkspaceRDFTestCase):
         indexer = zope.component.getAdapter(
             self.portal.workspace['virtuoso_test'], IWorkspaceRDFIndexer)
 
-        results = list(indexer.sparql_generator())
+        results = list(indexer.sparql_generator('urn:test:'))
         self.assertEqual(len(results), 3)
         self.assertEqual(results[0],
-            'CLEAR GRAPH <http://nohost/plone/workspace/virtuoso_test>')
+            'CLEAR GRAPH <urn:test:/plone/workspace/virtuoso_test>')
 
         self.assertEqual(' '.join(results[1].split()),
-            u'INSERT INTO <http://nohost/plone/workspace/virtuoso_test> { '
+            u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '
                 '<#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .'
             ' }')
 
@@ -94,3 +94,5 @@ class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
         engine = zope.component.getAdapter(settings, IEngine)
 
         self.assertEqual(len(engine.stmts), 2)
+        self.assertEqual(engine.stmts[0], 'SPARQL '
+            'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>')

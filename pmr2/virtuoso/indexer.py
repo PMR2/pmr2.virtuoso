@@ -30,17 +30,18 @@ class WorkspaceRDFIndexer(object):
         ob.parse(rdfstr)
         return ob.graph
 
-    def sparql_generator(self):
+    def sparql_generator(self, base):
         rdfinfo = zope.component.getAdapter(self.workspace, IWorkspaceRDFInfo)
         storage = zope.component.getAdapter(self.workspace, IStorage)
+        full_root = base + '/'.join(self.workspace.getPhysicalPath())
 
-        yield sparql.clear(self.workspace.absolute_url())
+        yield sparql.clear(full_root)
 
         for p in rdfinfo.paths:
             try:
                 contents = storage.file(p)
                 graph = self._mk_rdfgraph(contents)
-                yield sparql.insert(graph, self.workspace.absolute_url())
+                yield sparql.insert(graph, full_root)
             except:
                 continue
 
@@ -49,6 +50,6 @@ class WorkspaceRDFIndexer(object):
         settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
         engine = zope.component.getAdapter(settings, IEngine)
 
-        for stmt in self.sparql_generator():
+        for stmt in self.sparql_generator(settings.graph_prefix):
             engine.execute('SPARQL ' + stmt)
 

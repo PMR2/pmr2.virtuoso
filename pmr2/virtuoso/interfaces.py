@@ -32,6 +32,16 @@ class ISettings(zope.interface.Interface):
         required=False,
     )
 
+    graph_prefix = zope.schema.TextLine(
+        title=u'RDF Graph Prefix',
+        description=u"The specific urn prefix for this PMR instance applied "
+                     "to all exported RDF graphs.  This will uniquely "
+                     "identify the triples in Virtuoso as ones belong to this "
+                     "PMR instance.",
+        default=u'urn:pmr:virtuoso:',
+        required=False,
+    )
+
     sparql_endpoint = zope.schema.TextLine(
         title=u'SPQRAL Endpoint',
         description=u"The SPARQL only end point.  May deprecate ODBC access.",

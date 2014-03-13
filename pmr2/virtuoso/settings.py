@@ -17,6 +17,7 @@ class Settings(Persistent, Contained):
     user = FieldProperty(ISettings['user'])
     password = FieldProperty(ISettings['password'])
     odbc_source = FieldProperty(ISettings['odbc_source'])
+    graph_prefix = FieldProperty(ISettings['graph_prefix'])
     sparql_endpoint = FieldProperty(ISettings['sparql_endpoint'])
 
     @property
