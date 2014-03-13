@@ -32,6 +32,13 @@ class ISettings(zope.interface.Interface):
         required=False,
     )
 
+    sparql_endpoint = zope.schema.TextLine(
+        title=u'SPQRAL Endpoint',
+        description=u"The SPARQL only end point.  May deprecate ODBC access.",
+        default=u'http://localhost:8890/sparql',
+        required=False,
+    )
+
 
 class IEngine(zope.interface.Interface):
     """Interface to the engine."""
