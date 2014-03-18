@@ -37,7 +37,9 @@ class ISettings(zope.interface.Interface):
         description=u"The specific urn prefix for this PMR instance applied "
                      "to all exported RDF graphs.  This will uniquely "
                      "identify the triples in Virtuoso as ones belong to this "
-                     "PMR instance.",
+                     "PMR instance.  WARNING: changing this will NOT affect "
+                     "existing triples that were already exported, and they "
+                     "will become orphaned.",
         default=u'urn:pmr:virtuoso:',
         required=False,
     )
