@@ -23,7 +23,7 @@ class WorkspaceRDFInfoEditForm(EditForm):
     def getContent(self):
         return zope.component.getAdapter(self.context, IWorkspaceRDFInfo)
 
-    @z3c.form.button.buttonAndHandler(u'Update and Export To RDF Store',
+    @z3c.form.button.buttonAndHandler(u'Apply Changes and Export To RDF Store',
                                       name='export_rdf')
     def handleExportRdf(self, action):
         """
