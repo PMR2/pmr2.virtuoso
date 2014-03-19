@@ -3,12 +3,12 @@ import zope.component
 
 from pmr2.app.workspace.interfaces import IWorkspace, IStorage
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-from pmr2.rdf.base import RdfXmlObject
 
 from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso import sparql
+from pmr2.virtuoso import parser
 
 
 @zope.component.adapter(IWorkspace)
@@ -26,9 +26,7 @@ class WorkspaceRDFIndexer(object):
         serialization formats that are not XML.
         """
 
-        ob = RdfXmlObject()
-        ob.parse(rdfstr)
-        return ob.graph
+        return parser.parse(rdfstr)
 
     def sparql_generator(self, base):
         rdfinfo = zope.component.getAdapter(self.workspace, IWorkspaceRDFInfo)

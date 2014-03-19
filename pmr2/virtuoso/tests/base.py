@@ -34,7 +34,7 @@ ptc.setupPloneSite(products=('pmr2.virtuoso'))
 
 r1 = {}
 
-for fn in ['special_cases.xml', 'simple.rdf']:
+for fn in ['special_cases.xml', 'simple.n3', 'simple.rdf', 'embedded.rdf']:
     with open(join(dirname(__file__), 'data', fn)) as fd:
         r1[fn] = fd.read()
 

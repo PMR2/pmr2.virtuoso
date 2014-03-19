@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ex:root xmlns:ex="http://namespace.example.com">
+
+  <rdf:RDF
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+      xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <rdf:Description rdf:about="#test1">
+      <dc:title>Test 1</dc:title>
+    </rdf:Description>
+  </rdf:RDF>
+
+  <ex:nest>
+    <rdf:RDF
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:dc="http://purl.org/dc/elements/1.1/">
+      <rdf:Description rdf:about="#test2">
+        <dc:title>Test 1</dc:title>
+      </rdf:Description>
+    </rdf:RDF>
+  </ex:nest>
+
+</ex:root>
