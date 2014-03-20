@@ -21,7 +21,11 @@ class WorkspaceRDFInfoEditForm(EditForm):
     omitted = None
 
     def getContent(self):
-        return zope.component.getAdapter(self.context, IWorkspaceRDFInfo)
+        result = zope.component.getAdapter(self.context, IWorkspaceRDFInfo)
+        parent = result.__getattribute__('__parent__')
+        if len(parent.getPhysicalPath()) == 1:
+            result.__setattr__('__parent__', result.__parent__)
+        return result
 
     @z3c.form.button.buttonAndHandler(u'Apply Changes and Export To RDF Store',
                                       name='export_rdf')
