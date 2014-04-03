@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.0 - Unreleased
+0.1 - 2014-04-03
 ----------------
 
-* Initial release
+* Initial release of interaction with the Virtuoso RDF store from PMR.
 
