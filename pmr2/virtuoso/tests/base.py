@@ -9,10 +9,10 @@ from Products.PloneTestCase.layer import onsetup, onteardown
 from Products.PloneTestCase import PloneTestCase as ptc
 
 from pmr2.app.workspace.content import WorkspaceContainer, Workspace
+from pmr2.app.workspace.interfaces import IStorageUtility
 
 import pmr2.testing
 from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
-from pmr2.app.workspace.tests import storage
 
 
 @onsetup
@@ -32,19 +32,14 @@ setup()
 teardown()
 ptc.setupPloneSite(products=('pmr2.virtuoso'))
 
-r1 = {}
-
-for fn in ['special_cases.xml', 'simple.n3', 'simple.rdf', 'embedded.rdf']:
-    with open(join(dirname(__file__), 'data', fn)) as fd:
-        r1[fn] = fd.read()
-
-storage.DummyStorageUtility._dummy_storage_data['virtuoso_test'] = [r1]
-
 
 class WorkspaceRDFTestCase(WorkspaceDocTestCase):
 
     def setUp(self):
         super(WorkspaceRDFTestCase, self).setUp()
+        su = zope.component.getUtility(IStorageUtility, name='dummy_storage')
+        su._loadDir('virtuoso_test', join(dirname(__file__), 'data'))
+
         from pmr2.virtuoso.tests.engine import Engine
         zope.component.provideAdapter(Engine())
         self.portal['workspace'] = WorkspaceContainer()

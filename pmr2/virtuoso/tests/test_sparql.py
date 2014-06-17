@@ -14,7 +14,8 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_insert_special(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__), 'data', 'special_cases.xml')) as fd:
+        with open(join(dirname(__file__),
+                'data', '0', 'special_cases.xml')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)
 
