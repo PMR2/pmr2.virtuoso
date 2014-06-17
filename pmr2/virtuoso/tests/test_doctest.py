@@ -4,21 +4,19 @@ import doctest
 from zope.component import testing
 from Testing import ZopeTestCase as ztc
 
-from Products.PloneTestCase import PloneTestCase as ptc
+from plone.testing import layered
 
-from pmr2.app.workspace.tests.base import WorkspaceDocTestCase
-from pmr2.virtuoso.tests import base
+from pmr2.virtuoso.tests import layer
 
 
 def test_suite():
     return unittest.TestSuite([
 
         # Content tests.
-        ztc.ZopeDocFileSuite(
+        layered(ztc.ZopeDocFileSuite(
             'README.rst', package='pmr2.virtuoso',
-            test_class=WorkspaceDocTestCase,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS,
-        ),
+        ), layer=layer.PMR2_VIRTUOSO_INTEGRATION_LAYER)
 
     ])
 

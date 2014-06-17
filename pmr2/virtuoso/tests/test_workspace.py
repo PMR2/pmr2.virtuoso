@@ -13,28 +13,31 @@ from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
 from pmr2.virtuoso.workspace import WorkspaceRDFInfo
 
-from pmr2.virtuoso.tests import base
+from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
 from pmr2.virtuoso.browser.workspace import WorkspaceRDFInfoEditForm
 
 from pmr2.testing.base import TestRequest
 
 
-class WorkspaceAnnotationTestCase(base.WorkspaceRDFTestCase):
+class WorkspaceAnnotationTestCase(unittest.TestCase):
+
+    layer = PMR2_VIRTUOSO_INTEGRATION_LAYER
 
     def test_workspace_rdf_annotation(self):
         rdfinfo = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFInfo)
+            self.layer['portal'].workspace['virtuoso_test'], IWorkspaceRDFInfo)
 
         self.assertTrue(isinstance(rdfinfo, WorkspaceRDFInfo))
 
     def test_workspace_rdf_indexer(self):
         rdfinfo = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFInfo)
+            self.layer['portal'].workspace['virtuoso_test'], IWorkspaceRDFInfo)
 
         rdfinfo.paths = ['simple.rdf', 'special_cases.xml']
 
         indexer = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFIndexer)
+            self.layer['portal'].workspace['virtuoso_test'],
+            IWorkspaceRDFIndexer)
 
         results = list(indexer.sparql_generator('urn:test:'))
         self.assertEqual(len(results), 3)
@@ -48,12 +51,13 @@ class WorkspaceAnnotationTestCase(base.WorkspaceRDFTestCase):
 
     def test_workspace_double_format(self):
         rdfinfo = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFInfo)
+            self.layer['portal'].workspace['virtuoso_test'], IWorkspaceRDFInfo)
 
         rdfinfo.paths = ['simple.rdf', 'simple.n3']
 
         indexer = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFIndexer)
+            self.layer['portal'].workspace['virtuoso_test'],
+            IWorkspaceRDFIndexer)
 
         results = list(indexer.sparql_generator('urn:test:'))
 
@@ -70,13 +74,15 @@ class WorkspaceAnnotationTestCase(base.WorkspaceRDFTestCase):
         # how virtuoso handles this (or how should) is undefined.
 
 
-class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
+class WorkspaceBrowserTestCase(unittest.TestCase):
     """
     For the browser side of things.
     """
 
+    layer = PMR2_VIRTUOSO_INTEGRATION_LAYER
+
     def test_workspace_rdf_edit_form_render(self):
-        context = self.portal.workspace['virtuoso_test']
+        context = self.layer['portal'].workspace['virtuoso_test']
         request = TestRequest()
         form = WorkspaceRDFInfoEditForm(context, request)
         result = form()
@@ -86,7 +92,7 @@ class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
         self.assertIn('form.buttons.apply', result)
 
     def test_workspace_rdf_edit_form_submit(self):
-        context = self.portal.workspace['virtuoso_test']
+        context = self.layer['portal'].workspace['virtuoso_test']
         rdfinfo = zope.component.getAdapter(context, IWorkspaceRDFInfo)
         self.assertIsNone(rdfinfo.paths)
 
@@ -100,9 +106,9 @@ class WorkspaceBrowserTestCase(base.WorkspaceRDFTestCase):
         self.assertEqual(rdfinfo.paths, ['simple.rdf', 'special_cases.xml'])
 
     def test_workspace_rdf_edit_form_export(self):
-        context = self.portal.workspace['virtuoso_test']
+        context = self.layer['portal'].workspace['virtuoso_test']
         rdfinfo = zope.component.getAdapter(
-            self.portal.workspace['virtuoso_test'], IWorkspaceRDFInfo)
+            self.layer['portal'].workspace['virtuoso_test'], IWorkspaceRDFInfo)
         rdfinfo.paths = ['simple.rdf', 'special_cases.xml']
 
         request = TestRequest(form={
