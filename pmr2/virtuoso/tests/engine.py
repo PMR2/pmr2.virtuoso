@@ -14,10 +14,13 @@ class MockEngine(object):
     zope.interface.implements(IEngine)
 
     def __init__(self):
-        self.stmts = []
+        self._clear()
 
     def execute(self, stmt):
         self.stmts.append(stmt)
+
+    def _clear(self):
+        self.stmts = []
 
 
 def Engine():

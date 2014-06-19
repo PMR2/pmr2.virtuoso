@@ -75,5 +75,5 @@ class IWorkspaceRDFInfo(zope.interface.Interface):
 class IWorkspaceRDFIndexer(zope.interface.Interface):
     """
     The adapter that provides the method that collects the marked RDF
-    paths and indexes the content into the RDF store.
+    paths and indexes the content into the RDF store for a workspace.
     """

@@ -106,6 +106,11 @@ class WorkspaceBrowserTestCase(unittest.TestCase):
         self.assertEqual(rdfinfo.paths, ['simple.rdf', 'special_cases.xml'])
 
     def test_workspace_rdf_edit_form_export(self):
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
+        engine = zope.component.getAdapter(settings, IEngine)
+        engine._clear()
+
         context = self.layer['portal'].workspace['virtuoso_test']
         rdfinfo = zope.component.getAdapter(
             self.layer['portal'].workspace['virtuoso_test'], IWorkspaceRDFInfo)
@@ -117,10 +122,6 @@ class WorkspaceBrowserTestCase(unittest.TestCase):
         })
         form = WorkspaceRDFInfoEditForm(context, request)
         form.update()
-
-        gs = zope.component.getUtility(IPMR2GlobalSettings)
-        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
-        engine = zope.component.getAdapter(settings, IEngine)
 
         self.assertEqual(len(engine.stmts), 2)
         self.assertEqual(engine.stmts[0], 'SPARQL '
