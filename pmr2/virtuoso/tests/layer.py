@@ -13,6 +13,7 @@ from pmr2.app.workspace.content import Workspace
 from pmr2.app.workspace.interfaces import IStorageUtility
 
 from pmr2.app.workspace.tests.layer import WORKSPACE_BASE_FIXTURE
+from pmr2.app.exposure.tests.layer import EXPOSURE_FIXTURE
 
 
 class VirtuosoLayer(PloneSandboxLayer):
@@ -45,3 +46,37 @@ PMR2_VIRTUOSO_FIXTURE = VirtuosoLayer()
 
 PMR2_VIRTUOSO_INTEGRATION_LAYER = IntegrationTesting(
     bases=(PMR2_VIRTUOSO_FIXTURE,), name="pmr2.virtuoso:integration",)
+
+
+class VirtuosoExposureLayer(PloneSandboxLayer):
+
+    defaultBases = (PMR2_VIRTUOSO_FIXTURE,) # EXPOSURE_FIXTURE,)
+
+    def setUpPloneSite(self, portal):
+        from pmr2.app.exposure.content import Exposure
+        from pmr2.app.exposure.content import ExposureContainer
+        from pmr2.app.exposure.content import ExposureFile
+
+        # Using a separate container because of inability for layers to
+        # actually isolate from each other during tearing down when
+        # multiple defaultBases (or bases) are used, (especially when
+        # running as part of the entire test) and that they
+        # somehow persist through tearDown.
+
+        portal['virtuoso_exposure'] = ExposureContainer('virtuoso_exposure')
+
+        e = Exposure('virtuoso_test')
+        e.workspace = u'/plone/workspace/virtuoso_test'
+        e.commit_id = u'0'
+        portal.virtuoso_exposure['virtuoso_test'] = e
+        portal.virtuoso_exposure['virtuoso_test'].reindexObject()
+
+        ef = ExposureFile('simple.rdf')
+        portal.virtuoso_exposure.virtuoso_test['simple.rdf'] = ef
+
+PMR2_VIRTUOSO_EXPOSURE_FIXTURE = VirtuosoExposureLayer()
+
+PMR2_VIRTUOSO_EXPOSURE_INTEGRATION_LAYER = IntegrationTesting(
+    bases=(PMR2_VIRTUOSO_EXPOSURE_FIXTURE,),
+    name="pmr2.virtuoso:integration_exposure",
+)

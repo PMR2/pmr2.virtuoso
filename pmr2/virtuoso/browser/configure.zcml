@@ -27,4 +27,13 @@
       permission="cmf.ModifyPortalContent"
       />
 
+  <!-- note view -->
+
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      name="virtuoso_rdf"
+      class=".view.VirtuosoNoteView"
+      permission="zope2.View"
+      />
+
 </configure>

@@ -66,3 +66,19 @@ class WorkspaceRDFIndexer(BaseRDFIndexer):
             except:
                 continue
 
+
+@zope.component.adapter(IExposureFileAnnotator)
+@zope.interface.implementer(IExposureFileAnnotatorRDFIndexer)
+class ExposureFileRDFIndexer(BaseRDFIndexer):
+
+    def __init__(self, context):
+        self.context = context
+
+    def sparql_generator(self, base):
+        # grab the file.
+        full_root = base + '/'.join(self.context.context.getPhysicalPath())
+
+        yield sparql.clear(full_root)
+
+        graph = self._mk_rdfgraph(self.context.input)
+        yield sparql.insert(graph, full_root)

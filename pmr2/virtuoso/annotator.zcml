@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.virtuoso">
+
+  <!-- Note storage -->
+
+  <adapter
+      for="pmr2.app.exposure.interfaces.IExposureFile"
+      factory=".note.VirtuosoNoteFactory"
+      provides=".interfaces.IVirtuosoNote"
+      name="virtuoso_rdf"
+      />
+
+  <!-- Note Generation -->
+
+  <utility
+      name="virtuoso_rdf"
+      component=".annotator.VirtuosoAnnotatorFactory"
+      provides="pmr2.app.annotation.interfaces.IExposureFileAnnotator"
+      />
+
+</configure>

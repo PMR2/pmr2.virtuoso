@@ -3,6 +3,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="pmr2">
 
+  <adapter factory=".indexer.ExposureFileRDFIndexer" />
+
   <adapter 
       for="pmr2.app.workspace.interfaces.IWorkspace"
       factory=".indexer.WorkspaceRDFIndexer"

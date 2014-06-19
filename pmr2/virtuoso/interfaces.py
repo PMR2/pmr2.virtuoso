@@ -77,3 +77,23 @@ class IWorkspaceRDFIndexer(zope.interface.Interface):
     The adapter that provides the method that collects the marked RDF
     paths and indexes the content into the RDF store for a workspace.
     """
+
+
+class IExposureFileAnnotatorRDFIndexer(zope.interface.Interface):
+    """
+    The adapter that provides the method that collects the marked RDF
+    paths and indexes the content into the RDF store for the Virtuoso
+    RDF annotator.
+    """
+
+
+# Exposure related notes.
+
+class IVirtuosoNote(zope.interface.Interface):
+
+    # XXX subject to change.  should be a list of triples that got indexed.
+    metadata = zope.schema.Text(
+        title=u'Metadata Indexed',
+        description=u'The metadata (triples) added to the Virtuoso RDF store.',
+        required=False,
+    )

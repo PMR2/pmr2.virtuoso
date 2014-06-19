@@ -7,6 +7,7 @@
   <include package=".browser" />
   <include file="profiles.zcml" />
 
+  <include file="annotator.zcml" />
   <include file="engine.zcml" />
   <include file="indexer.zcml" />
   <include file="workspace.zcml" />
