@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.x - Unreleased
+----------------
+
+* Virtuoso Client through the JSON interface.
+
+
 0.1 - 2014-04-03
 ----------------
 
