@@ -12,5 +12,5 @@ logger = logging.getLogger(__name__)
 def reindex_workspace_rdf(workspace, event):
     try:
         zope.component.getAdapter(workspace, IWorkspaceRDFIndexer)()
-    except:
+    except Exception as e:
         logger.exception('reindex_workspace_rdf subscriber fault')

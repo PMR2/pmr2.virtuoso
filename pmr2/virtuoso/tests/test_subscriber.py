@@ -6,6 +6,7 @@ import zope.event
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.app.workspace.event import Push
+from pmr2.app.workspace.interfaces import IStorageUtility
 
 from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
@@ -43,3 +44,17 @@ class WorkspaceSubscriberTestCase(unittest.TestCase):
     def test_workspace_rdf_indexer_event(self):
         zope.event.notify(Push(self.context))
         self.assertEqual(len(self.engine.stmts), 2)
+
+    def test_workspace_rdf_indexer_event_file_not_exist(self):
+        # emulate a previous commit that allowed this to be
+        # specified by the user.
+        su = zope.component.getUtility(IStorageUtility, name='dummy_storage')
+        su._dummy_storage_data['virtuoso_test'][0]['does_not_exist.rdf'] = ''
+        rdfinfo = zope.component.getAdapter(self.context, IWorkspaceRDFInfo)
+        rdfinfo.paths = ['does_not_exist.rdf']
+        su._dummy_storage_data['virtuoso_test'][0].pop('does_not_exist.rdf')
+
+        zope.event.notify(Push(self.context))
+        # data should be purged and none will be added.
+        self.assertEqual(self.engine.stmts, ['SPARQL '
+            u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>'])
