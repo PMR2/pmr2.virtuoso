@@ -13,5 +13,6 @@
   <include file="workspace.zcml" />
 
   <include file="settings.zcml" />
+  <include file="subscriber.zcml" />
 
 </configure>
