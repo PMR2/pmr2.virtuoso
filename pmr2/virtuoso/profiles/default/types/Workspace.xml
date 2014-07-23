@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object name="Workspace"
+        meta_type="Factory-based Type Information with dynamic views"
+        xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+
+ <action title="RDF Indexing" action_id="rdf_indexer" 
+    category="object" condition_expr="" 
+    url_expr="string:${object_url}/rdf_indexer" 
+    visible="True" i18n:attributes="title">
+  <permission value="Modify portal content"/>
+ </action>
+
+</object>
