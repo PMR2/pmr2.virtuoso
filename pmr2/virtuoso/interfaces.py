@@ -97,3 +97,10 @@ class IVirtuosoNote(zope.interface.Interface):
         description=u'The metadata (triples) added to the Virtuoso RDF store.',
         required=False,
     )
+
+    exclude_nav = zope.schema.Bool(
+        title=u'Exclude from Navigation',
+        description=u'If selected, this item will not appear in the '
+            'navigation tree',
+        required=False,
+    )

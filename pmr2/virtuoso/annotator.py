@@ -3,6 +3,7 @@ import zope.component
 
 from pmr2.app.factory import named_factory
 from pmr2.app.annotation.interfaces import IExposureFileAnnotator
+from pmr2.app.annotation.interfaces import IExposureFilePostEditAnnotator
 from pmr2.app.annotation.annotator import ExposureFileAnnotatorBase
 from pmr2.app.exposure.interfaces import IExposureSourceAdapter
 
@@ -16,18 +17,19 @@ class VirtuosoAnnotator(ExposureFileAnnotatorBase):
     Virtuoso.
     """
 
-    zope.interface.implements(IExposureFileAnnotator)
+    zope.interface.implements(IExposureFileAnnotator,
+                              IExposureFilePostEditAnnotator)
     title = u'Export Semantic Metadata to Virtuoso'
     label = u'Semantic Metadata'
     description = u''
     for_interface = IVirtuosoNote
+    edited_names = ('exclude_nav',)
 
     def generate(self):
         idx = zope.component.getAdapter(self, IExposureFileAnnotatorRDFIndexer)
         idx()
-        return (
-            # temporary placeholder values.
-            ('metadata', u''),
-        )
+        d = dict(self.data)
+        self.context.setExcludeFromNav(d.get('exclude_nav'))
+        return self.data
 
 VirtuosoAnnotatorFactory = named_factory(VirtuosoAnnotator)

@@ -17,5 +17,6 @@ class VirtuosoNote(ExposureFileNoteBase):
     zope.interface.implements(IVirtuosoNote)
 
     metadata = fieldproperty.FieldProperty(IVirtuosoNote['metadata'])
+    exclude_nav = fieldproperty.FieldProperty(IVirtuosoNote['exclude_nav'])
 
 VirtuosoNoteFactory = note_factory(VirtuosoNote, 'virtuoso_rdf')
