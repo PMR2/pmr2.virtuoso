@@ -55,3 +55,8 @@ class ExposureTestCase(unittest.TestCase):
                 'virtuoso_exposure/virtuoso_test/simple.rdf>')
 
         self.assertTrue(context.getExcludeFromNav())
+
+        annotator = zope.component.getUtility(IExposureFileAnnotator,
+            name='virtuoso_rdf')(context, request)
+        annotator(data=(('exclude_nav', 0),))
+        self.assertFalse(context.getExcludeFromNav())
