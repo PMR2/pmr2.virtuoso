@@ -7,8 +7,11 @@ from Zope2.App import zcml
 from Products.Five import fiveconfigure
 
 from pmr2.app.exposure.browser.browser import ExposureFileAnnotatorForm
+from pmr2.app.exposure.browser.browser import ExposureFileNoteEditForm
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
+from pmr2.app.annotation.interfaces import IExposureFileAnnotator
 from pmr2.virtuoso.interfaces import IEngine
+from pmr2.virtuoso.annotator import VirtuosoAnnotator
 
 from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_EXPOSURE_INTEGRATION_LAYER
 from pmr2.testing.base import TestRequest
@@ -35,9 +38,20 @@ class ExposureTestCase(unittest.TestCase):
         view = ExposureFileAnnotatorForm(context, request)
         view.update()
 
+        # follow up with post annotation
+        request = TestRequest(form={
+            'form.widgets.exclude_nav': 1,
+            'form.buttons.apply': 1,
+        })
+        annotator = zope.component.getUtility(IExposureFileAnnotator,
+            name='virtuoso_rdf')(context, request)
+        annotator(data=(('exclude_nav', 1),))
+
         note = zope.component.getAdapter(context, name='virtuoso_rdf')
 
         self.assertEqual(len(engine.stmts), 2)
         self.assertEqual(engine.stmts[0], 'SPARQL '
             'CLEAR GRAPH <urn:pmr:virtuoso:/plone/'
                 'virtuoso_exposure/virtuoso_test/simple.rdf>')
+
+        self.assertTrue(context.getExcludeFromNav())
