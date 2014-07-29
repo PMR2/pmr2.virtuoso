@@ -34,3 +34,60 @@ class SparqlTestCase(unittest.TestCase):
 
         result = sparql.clear('<>')
         self.assertEqual(result, 'CLEAR GRAPH <%3C%3E>')
+
+    def test_n3_insert(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(__file__),
+                'data', '0', 'multi.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+        graph = sorted(sparql.n3_insert(obj.graph))
+
+        self.assertEqual(graph, [
+            u'<#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Metadata File" .',
+            u'<../parent/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Parent File" .',
+            u'<nested/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Nested File" .',
+            u'<sibling_file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Sibling File" .',
+        ])
+
+    def test_n3_insert_base(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(__file__),
+                'data', '0', 'multi.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+        graph = sorted(sparql.n3_insert(obj.graph, 'metadata.rdf'))
+
+        # the <#test> should have been normalized.
+        self.assertEqual(graph, [
+            u'<../parent/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Parent File" .',
+            u'<metadata.rdf#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Metadata File" .',
+            u'<nested/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Nested File" .',
+            u'<sibling_file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Sibling File" .',
+        ])
+
+    def test_n3_insert_nested_path(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(__file__),
+                'data', '0', 'multi.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+        graph = sorted(sparql.n3_insert(obj.graph, 'multi/path/metadata.xml'))
+        self.assertEqual(graph, [
+            u'<multi/parent/file#test> '
+                '<http://purl.org/dc/elements/1.1/title> "Parent File" .',
+            u'<multi/path/metadata.xml#test> '
+                '<http://purl.org/dc/elements/1.1/title> "Metadata File" .',
+            u'<multi/path/nested/file#test> '
+                '<http://purl.org/dc/elements/1.1/title> "Nested File" .',
+            u'<multi/path/sibling_file#test> '
+                '<http://purl.org/dc/elements/1.1/title> "Sibling File" .',
+        ])
