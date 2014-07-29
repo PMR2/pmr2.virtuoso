@@ -38,7 +38,8 @@ class WorkspaceSubscriberTestCase(unittest.TestCase):
             u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>')
         self.assertEqual(' '.join(self.engine.stmts[1].split()), u'SPARQL '
             u'INSERT INTO <urn:pmr:virtuoso:/plone/workspace/virtuoso_test> { '
-                '<#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .'
+                '<simple.rdf#test> <http://purl.org/dc/elements/1.1/title> '
+                    '"Test Node" .'
             ' }')
 
     def test_workspace_rdf_indexer_event(self):

@@ -62,7 +62,7 @@ class WorkspaceRDFIndexer(BaseRDFIndexer):
             try:
                 contents = storage.file(p)
                 graph = self._mk_rdfgraph(contents)
-                yield sparql.insert(graph, full_root)
+                yield sparql.insert(graph, full_root, p)
             except:
                 continue
 

@@ -46,7 +46,8 @@ class WorkspaceAnnotationTestCase(unittest.TestCase):
 
         self.assertEqual(' '.join(results[1].split()),
             u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '
-                '<#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .'
+                '<simple.rdf#test> <http://purl.org/dc/elements/1.1/title> '
+                    '"Test Node" .'
             ' }')
 
     def test_workspace_double_format(self):
@@ -63,12 +64,16 @@ class WorkspaceAnnotationTestCase(unittest.TestCase):
 
         self.assertEqual(' '.join(results[1].split()),
             u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '
-                '<#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .'
+                '<simple.rdf#test> <http://purl.org/dc/elements/1.1/title> '
+                    '"Test Node" .'
             ' }')
 
+        # note that the <.#test> resolves into the "root" of the 
+        # workspace.
         self.assertEqual(' '.join(results[2].split()),
             u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '
-                '<#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .'
+                '<#test> <http://purl.org/dc/elements/1.1/title> '
+                    '"Test Node" .'
             ' }')
 
         # how virtuoso handles this (or how should) is undefined.
