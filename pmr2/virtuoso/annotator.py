@@ -26,10 +26,10 @@ class VirtuosoAnnotator(ExposureFileAnnotatorBase):
     edited_names = ('exclude_nav',)
 
     def generate(self):
-        if not self.data:
-            return {}
         idx = zope.component.getAdapter(self, IExposureFileAnnotatorRDFIndexer)
         idx()
+        if not self.data:
+            return {}
         d = dict(self.data)
         self.context.setExcludeFromNav(d.get('exclude_nav'))
         return self.data
