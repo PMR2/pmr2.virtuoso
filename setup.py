@@ -29,6 +29,7 @@ setup(name='pmr2.virtuoso',
           'pmr2.rdf',
           'virtuoso==0.12.6pmr',
           'sqlalchemy>=0.6.0',
+          'requests>=1.0.0',
       ],
       entry_points="""
       # -*- Entry points: -*-
