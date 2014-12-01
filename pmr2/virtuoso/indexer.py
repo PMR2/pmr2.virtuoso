@@ -58,7 +58,7 @@ class WorkspaceRDFIndexer(BaseRDFIndexer):
 
         yield sparql.clear(full_root)
 
-        for p in rdfinfo.paths:
+        for p in (rdfinfo.paths or []):
             try:
                 contents = storage.file(p)
                 graph = self._mk_rdfgraph(contents)
