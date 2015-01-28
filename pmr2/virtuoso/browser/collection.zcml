@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.json">
+
+  <browser:page
+      for="pmr2.app.workspace.interfaces.IWorkspace"
+      name="rdf_indexer"
+      class=".collection.WorkspaceRDFInfoEditForm"
+      layer="pmr2.json.interfaces.ISimpleJsonLayer1"
+      permission="cmf.ModifyPortalContent"
+      />
+
+</configure>
