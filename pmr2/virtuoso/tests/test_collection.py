@@ -33,8 +33,8 @@ class VirtuosoTestCase(unittest.TestCase):
         results = json.loads(f())
         self.assertEqual(
             [i['name'] for i in results['collection']['template']['data']],
-            [u'json.widgets.paths', u'json.buttons.apply',
-                u'json.buttons.export_rdf']
+            [u'form.widgets.paths', u'form.buttons.apply',
+                u'form.buttons.export_rdf']
         )
         self.assertEqual(len(
             results['collection']['template']['data'][0]['options']), 5)
@@ -43,8 +43,8 @@ class VirtuosoTestCase(unittest.TestCase):
         context = self.layer['portal'].workspace['virtuoso_test']
         request = base.TestRequest(method='POST',
             stdin=StringIO('{"template": {"data": ['
-                '{"name": "json.widgets.paths", "value": ["simple.rdf"]},'
-                '{"name": "json.buttons.apply", "value": 1}'
+                '{"name": "form.widgets.paths", "value": ["simple.rdf"]},'
+                '{"name": "form.buttons.apply", "value": 1}'
             ']}}'))
         form = collection.WorkspaceRDFInfoEditForm(context, request)
         result = json.loads(form())
