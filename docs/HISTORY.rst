@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3 - 2015-03-19
+----------------
+
+* Include support of webservices through ``pmr2.json``.
+* Other minor fixes.
+
 0.2 - 2014-08-14
 ----------------
 
