@@ -26,6 +26,27 @@ class SparqlTestCase(unittest.TestCase):
         self.assertNotIn('<> ', result)
         # but the ones inside strings shouldn't be touched.
         self.assertIn('<><>', result)
+        # Strings properly escaped in a string
+        self.assertIn('"Title \\"}<for> an external resource."', result)
+        # Backslashes in URLs should be escaped
+        self.assertNotIn('.\\file#test', result)
+        self.assertIn('.%5Cfile#test', result)
+
+    def test_iri_escape(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(__file__),
+                'data', '0', 'injection.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+
+        result = sparql.insert(obj.graph,
+            'http://store.example.com/metadata.rdf')
+
+        # all < and > needs to be escaped
+        self.assertNotIn('<ha> <ha> <ha>', result)
+        # all whitespaces escaped in iri
+        self.assertNotIn('\nCLEAR GRAPH <http', result)
+        self.assertIn('%0ACLEAR%20GRAPH%20%3Chttp', result)
 
     def test_clear(self):
         result = sparql.clear('http://store.example.com/metadata.rdf')

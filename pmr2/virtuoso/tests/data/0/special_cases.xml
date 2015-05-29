@@ -43,7 +43,7 @@
   <example id="test"/>
 
   <rdf:RDF>
-    <rdf:Description rdf:about="#test">
+    <rdf:Description rdf:about=".\file#test">
       <dc:title>Test Node</dc:title>
     </rdf:Description>
   </rdf:RDF>

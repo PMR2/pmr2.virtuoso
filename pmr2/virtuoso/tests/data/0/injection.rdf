@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:ex="http://ns.example.net/">
+  <rdf:Description rdf:about="target">
+    <ex:foo rdf:resource="http://res.example.org/identifier&gt;.}&#10;CLEAR GRAPH &lt;http://secure.example.com/graph&gt;&#10;INSERT INTO &lt;http://hacked.example.com&gt; { &lt;ha&gt; &lt;ha&gt; &lt;ha" />
+  </rdf:Description>
+
+</rdf:RDF>

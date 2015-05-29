@@ -13,7 +13,10 @@ def quote_iri(url):
 
 def n3(item):
     # handle special cases
-    return iri_replacements.get(item, item).n3()
+    result = iri_replacements.get(item, item)
+    if isinstance(result, rdflib.URIRef):
+        result = rdflib.URIRef(quote_iri(result))
+    return result.n3()
 
 def n3_insert(graph, subject_prefix=None):
     for s, p, o in graph.triples((None, None, None)):

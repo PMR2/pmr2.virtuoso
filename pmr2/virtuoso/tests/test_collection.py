@@ -37,7 +37,7 @@ class VirtuosoTestCase(unittest.TestCase):
                 u'form.buttons.export_rdf']
         )
         self.assertEqual(len(
-            results['collection']['template']['data'][0]['options']), 5)
+            results['collection']['template']['data'][0]['options']), 6)
 
     def test_workspace_rdf_edit_form_submit(self):
         context = self.layer['portal'].workspace['virtuoso_test']
