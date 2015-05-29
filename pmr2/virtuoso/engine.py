@@ -2,6 +2,7 @@ import logging
 
 import sqlalchemy
 from sqlalchemy.sql import bindparam
+from sqlalchemy.exc import ResourceClosedError
 
 import zope.component
 import zope.interface
@@ -62,9 +63,13 @@ class Engine(object):
 
         try:
             lr = conn.execute(stmt)
-            fa = lr.fetchall()
-            # assuming the results is in this format.
-            results = [r.values() for r in fa]
+            try:
+                fa = lr.fetchall()
+            except ResourceClosedError:
+                results = []
+            else:
+                # assuming the results is in this format.
+                results = [r.values() for r in fa]
             lr.close()
         except:
             logger.error('fail to execute sql', exc_info=1)
