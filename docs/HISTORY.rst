@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4 - 2015-05-29
+----------------
+
+* Fix a major issue with xml conversion to n3 not being properly encoded.
+* Fix for issues where newer versions of sqlalchemy raises an exception
+  if a query returns nothing.
+
 0.3 - 2015-03-19
 ----------------
 
