@@ -2,6 +2,7 @@ import unittest
 from os.path import dirname, join
 
 from pmr2.rdf.base import RdfXmlObject
+from pmr2.virtuoso import parser
 from pmr2.virtuoso import sparql
 
 
@@ -45,6 +46,19 @@ class SparqlTestCase(unittest.TestCase):
         # all < and > needs to be escaped
         self.assertNotIn('<ha> <ha> <ha>', result)
         # all whitespaces escaped in iri
+        self.assertNotIn('\nCLEAR GRAPH <http', result)
+        self.assertIn('%0ACLEAR%20GRAPH%20%3Chttp', result)
+
+    def test_iri_escape_n3(self):
+        with open(join(dirname(__file__),
+                'data', '0', 'complex.n3')) as fd:
+            rawstr = fd.read()
+        graph = parser.parse(rawstr)
+
+        result = sparql.insert(graph, 'http://store.example.com/metadata.rdf')
+
+        # Ensure that none escaped and none double escaped
+        self.assertNotIn('<ha> <ha> <ha>', result)
         self.assertNotIn('\nCLEAR GRAPH <http', result)
         self.assertIn('%0ACLEAR%20GRAPH%20%3Chttp', result)
 

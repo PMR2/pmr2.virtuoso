@@ -1,0 +1,1 @@
+<target> <http://ns.example.net/foo> <http://res.example.org/identifier%3E.%7D%0ACLEAR%20GRAPH%20%3Chttp://secure.example.com/graph%3E%0AINSERT%20INTO%20%3Chttp://hacked.example.com%3E%20%7B%20%3Cha%3E%20%3Cha%3E%20%3Cha> .
