@@ -1,6 +1,6 @@
 import unittest
 
-from pmr2.virtuoso.util import quote_url
+from pmr2.virtuoso.helper import quote_url
 
 
 class QuoteUrlTestCase(unittest.TestCase):

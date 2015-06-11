@@ -10,7 +10,7 @@ import zope.interface
 from Products.CMFCore.utils import getToolByName
 
 from pmr2.virtuoso.interfaces import IEngine
-from pmr2.virtuoso.util import quote_url
+from pmr2.virtuoso.helper import quote_url
 
 logger = logging.getLogger('pmr2.virtuoso.engine')
 
