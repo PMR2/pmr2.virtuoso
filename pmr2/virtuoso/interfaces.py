@@ -65,10 +65,6 @@ class ISparqlClient(zope.interface.Interface):
         """
 
 
-class ISparqlClientFactory(zope.interface.Interface):
-    """Factory utility"""
-
-
 class IWorkspaceRDFInfo(zope.interface.Interface):
     """
     Interface to the annotation that tracks the paths that are to be
