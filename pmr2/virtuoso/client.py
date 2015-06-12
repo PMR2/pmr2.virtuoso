@@ -9,6 +9,16 @@ from pmr2.virtuoso.sparql import quote_iri
 from pmr2.virtuoso.interfaces import ISparqlClient
 
 
+_base_template = """
+SELECT ?_g %(query_variable)s
+WHERE {
+    GRAPH ?_g {
+        %(triple_pattern)s
+    }
+}
+"""
+
+
 @implementer(ISparqlClient)
 class SparqlClient(object):
     """
@@ -35,14 +45,7 @@ class SparqlClient(object):
 # I hate naming things, this is a bad name.
 class SettingsSparqlClient(SparqlClient):
 
-    base_template = """
-    SELECT ?_g %(query_variable)s
-    WHERE {
-        GRAPH ?_g {
-            %(triple_pattern)s
-        }
-    }
-    """
+    base_template = _base_template
 
     def __init__(self, settings):
         endpoint = settings.sparql_endpoint

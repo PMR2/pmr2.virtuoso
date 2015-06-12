@@ -13,17 +13,28 @@ class ClientTestCase(unittest.TestCase):
     layer = PMR2_VIRTUOSO_INTEGRATION_LAYER
 
     def setUp(self):
-        pass
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        self.settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
 
     def tearDown(self):
         pass
 
     def test_0000_base(self):
-        gs = zope.component.getUtility(IPMR2GlobalSettings)
-        settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
-        settings.sparql_endpoint = u'http://nohost/sparql'
-        client = zope.component.getAdapter(settings, ISparqlClient)
+        self.settings.sparql_endpoint = u'http://nohost/sparql'
+        client = zope.component.getAdapter(self.settings, ISparqlClient)
         self.assertEqual(client.endpoint, u'http://nohost/sparql')
+
+    def test_0001_query_construction(self):
+        client = zope.component.getAdapter(self.settings, ISparqlClient)
+        q = client.format_query('?s ?p ?o', '?s ?p ?o').strip()
+        self.assertEqual(q, ''
+            'SELECT ?_g ?s ?p ?o\n'
+            'WHERE {\n'
+            '    GRAPH ?_g {\n'
+            '        ?s ?p ?o\n'
+            '    }\n'
+            '}'
+        )
 
 
 def test_suite():
