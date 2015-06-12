@@ -56,6 +56,19 @@ class IEngine(zope.interface.Interface):
     """Interface to the engine."""
 
 
+class ISparqlClient(zope.interface.Interface):
+    """Interface to the SPARQL only client."""
+
+    def query(sparql_query):
+        """
+        The query
+        """
+
+
+class ISparqlClientFactory(zope.interface.Interface):
+    """Factory utility"""
+
+
 class IWorkspaceRDFInfo(zope.interface.Interface):
     """
     Interface to the annotation that tracks the paths that are to be
