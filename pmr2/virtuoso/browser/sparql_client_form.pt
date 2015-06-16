@@ -17,7 +17,20 @@
         <tal:if tal:condition="view/results">
           <div>
             Query results:
-            <div tal:content="view/results"></div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <td tal:repeat="v view/results/head/vars"
+                    tal:content="v"></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr tal:repeat="
+                    items view/results/results/filtered_bindings">
+                  <td tal:repeat="v items/values" tal:content="v"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </tal:if>
 

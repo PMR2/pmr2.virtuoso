@@ -92,21 +92,26 @@ class PortalSparqlClient(SparqlClient):
         #     }
         # }
 
-        bindings = []
-        for b in results['results']['bindings']:
-            g = b.get('_g', {}).get('value')
-            if not g:
-                continue
+        bindings = results['results']['bindings']
+        vars_ = results['head']['vars']
+        def bindings_filter():
+            for binding in bindings:
+                g = binding.get('_g', {}).get('value')
+                if not g:
+                    continue
 
-            brain = catalog(path={
-                'query': g.replace(self.prefix, '', 1),
-                'depth': 0,
-            })
-            if not brain:
-                continue
+                brain = catalog(path={
+                    'query': g.replace(self.prefix, '', 1),
+                    'depth': 0,
+                })
+                if not brain:
+                    continue
 
-            bindings.append(b)
+                yield {
+                    'original': binding,
+                    'values': (binding[v]['value'] for v in vars_),
+                }
 
         # replace bindings with the filtered version.
-        results['results']['bindings'] = bindings
+        results['results']['filtered_bindings'] = bindings_filter
         return results
