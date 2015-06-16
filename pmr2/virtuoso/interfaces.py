@@ -113,3 +113,38 @@ class IVirtuosoNote(zope.interface.Interface):
             'navigation tree',
         required=False,
     )
+
+
+class IQueryTemplate(zope.interface.Interface):
+    """
+    A query template.  Actually a placeholder for now.
+    """
+
+    tokens = zope.schema.TextLine(
+        title=u'Tokens',
+        description=u'List of tokens to be returned',
+    )
+
+    parameters = zope.schema.List(
+        title=u'Placeholders',
+        description=u'A list of variable parameters to query',
+    )
+
+    template = zope.schema.Text(
+        title=u'Template',
+        description=u'The template',
+    )
+
+
+class IQueryTemplateManager(zope.interface.Interface):
+    """
+    Query template manager
+    """
+
+    queries = zope.schema.Dict(
+        title=u'Queries',
+        description=u'All saved queries',
+        required=False,
+        key_type=zope.schema.TextLine(title=u'Query Key'),
+        value_type=zope.schema.Text(title=u'Template'),
+    )

@@ -1,0 +1,13 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="pmr2">
+
+  <adapter 
+      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot
+          .interfaces.ISettings"
+      provides=".interfaces.ISparqlClient"
+      factory=".client.PortalSparqlClient"
+      />
+
+</configure>

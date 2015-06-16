@@ -4,7 +4,6 @@ import json
 from zope.interface import implementer
 import zope.component
 
-from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.virtuoso.sparql import quote_iri
 from pmr2.virtuoso.interfaces import ISparqlClient
 
@@ -42,14 +41,14 @@ class SparqlClient(object):
         return r.json()
 
 
-# I hate naming things, this is a bad name.
-class SettingsSparqlClient(SparqlClient):
+class PortalSparqlClient(SparqlClient):
 
     base_template = _base_template
 
-    def __init__(self, settings):
+    def __init__(self, portal, settings):
+        self.portal = portal
         endpoint = settings.sparql_endpoint
-        super(SettingsSparqlClient, self).__init__(endpoint)
+        super(PortalSparqlClient, self).__init__(endpoint)
         self.prefix = settings.graph_prefix
 
     def format_query(self, query_variable, triple_pattern):
@@ -61,7 +60,53 @@ class SettingsSparqlClient(SparqlClient):
         Very prototype, also do this using a read-only account.
         """
 
+        # XXX use the framework to resolve this instead?
+        catalog = self.portal.portal_catalog
+
         q = self.format_query(query_variable, triple_pattern)
         results = self.query(q)
         # filter out all the graphs that do not match object.
+        # The Virtuoso SPARQL result format follows the SPARQL 1.1
+        # results JSON format as described at:
+        # http://www.w3.org/TR/sparql11-results-json/
+
+        # {
+        #     'head': {
+        #         'links': []
+        #         'vars': ['_g', ...].
+        #     }
+        #     'results': {
+        #         'distinct': (True|False),
+        #         'ordered': (True|False),
+        #         'bindings': [
+        #             {
+        #                 '_g': {u'type': u'uri', u'value': u'http://...'},
+        #                 ...
+        #             },
+        #             {
+        #                 '_g': {u'type': u'uri', u'value': u'http://...'},
+        #                 ...
+        #             },
+        #             ...
+        #         ]
+        #     }
+        # }
+
+        bindings = []
+        for b in results['results']['bindings']:
+            g = b.get('_g', {}).get('value')
+            if not g:
+                continue
+
+            brain = catalog(path={
+                'query': g.replace(self.prefix, '', 1),
+                'depth': 0,
+            })
+            if not brain:
+                continue
+
+            bindings.append(b)
+
+        # replace bindings with the filtered version.
+        results['results']['bindings'] = bindings
         return results
