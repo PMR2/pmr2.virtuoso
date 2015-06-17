@@ -40,7 +40,6 @@ class ClientTestCase(unittest.TestCase):
             '}'
         )
 
-
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(ClientTestCase))

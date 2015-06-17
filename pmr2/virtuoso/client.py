@@ -70,28 +70,6 @@ class PortalSparqlClient(SparqlClient):
         # results JSON format as described at:
         # http://www.w3.org/TR/sparql11-results-json/
 
-        # {
-        #     'head': {
-        #         'links': []
-        #         'vars': ['_g', ...].
-        #     }
-        #     'results': {
-        #         'distinct': (True|False),
-        #         'ordered': (True|False),
-        #         'bindings': [
-        #             {
-        #                 '_g': {u'type': u'uri', u'value': u'http://...'},
-        #                 ...
-        #             },
-        #             {
-        #                 '_g': {u'type': u'uri', u'value': u'http://...'},
-        #                 ...
-        #             },
-        #             ...
-        #         ]
-        #     }
-        # }
-
         bindings = results['results']['bindings']
         vars_ = results['head']['vars']
         def bindings_filter():
@@ -107,11 +85,17 @@ class PortalSparqlClient(SparqlClient):
                 if not brain:
                     continue
 
+                # replace g with the public URL
+                binding['_g']['value'] = brain[0].getURL()
+
+                # make new copies of everything
                 yield {
+                    # not quite original but...
                     'original': binding,
-                    'values': (binding[v]['value'] for v in vars_),
+                    'values': [binding[v]['value'] for v in vars_],
                 }
 
-        # replace bindings with the filtered version.
+        # filtered_bindings is the key to the generator that will be
+        # called to generate the results.
         results['results']['filtered_bindings'] = bindings_filter
         return results
