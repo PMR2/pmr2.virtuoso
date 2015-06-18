@@ -1,0 +1,11 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="pmr2.virtuoso">
+
+  <utility
+      name="application/sparql-results+json"
+      factory=".layer.SparqlJsonLayerApplier"
+      provides="pmr2.layer.interfaces.ILayerApplier"
+      />
+
+</configure>

@@ -56,6 +56,12 @@ class IEngine(zope.interface.Interface):
     """Interface to the engine."""
 
 
+class ISparqlJsonLayer(zope.interface.Interface):
+    """
+    Marker interface for the application/sparql-results+json mime type.
+    """
+
+
 class ISparqlClient(zope.interface.Interface):
     """Interface to the SPARQL only client."""
 
