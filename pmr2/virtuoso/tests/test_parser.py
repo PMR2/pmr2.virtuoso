@@ -18,7 +18,7 @@ class ParserTestCase(unittest.TestCase):
 
     def test_simple_n3_parse(self):
         graph = parser.parse(self.r1['simple.n3'])
-        self.assertEqual(len(list(graph)), 1)
+        self.assertEqual(len(list(graph)), 2)
 
     def test_embedded_rdf_parse(self):
         graph = parser.parse(self.r1['embedded.rdf'])

@@ -68,15 +68,15 @@ class WorkspaceAnnotationTestCase(unittest.TestCase):
                     '"Test Node" .'
             ' }')
 
-        # note that the <.#test> resolves into the "root" of the 
-        # workspace.
-        self.assertEqual(' '.join(results[2].split()),
-            u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '
-                '<#test> <http://purl.org/dc/elements/1.1/title> '
-                    '"Test Node" .'
-            ' }')
-
-        # how virtuoso handles this (or how should) is undefined.
+        stmt = ' '.join(results[2].split())
+        self.assertTrue(stmt.startswith(
+            u'INSERT INTO <urn:test:/plone/workspace/virtuoso_test> { '))
+        self.assertTrue(
+            '<simple.n3#test> <http://purl.org/dc/elements/1.1/subject> '
+                '"Test Subject" . ' in stmt)
+        self.assertTrue(
+            '<simple.n3#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Test Node" . ' in stmt)
 
 
 class WorkspaceBrowserTestCase(unittest.TestCase):

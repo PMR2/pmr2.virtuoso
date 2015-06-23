@@ -1,1 +1,2 @@
 <.#test> <http://purl.org/dc/elements/1.1/title> "Test Node" .
+<#test> <http://purl.org/dc/elements/1.1/subject> "Test Subject" .
