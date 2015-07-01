@@ -1,3 +1,4 @@
+import re
 import unittest
 from os.path import dirname, join
 
@@ -126,3 +127,42 @@ class SparqlTestCase(unittest.TestCase):
             u'<multi/path/sibling_file#test> '
                 '<http://purl.org/dc/elements/1.1/title> "Sibling File" .',
         ])
+
+
+class SparqlReconstructionTestCase(unittest.TestCase):
+
+    def test_0000_expected(self):
+        results = sparql.sanitize_select(
+            'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
+            '?s <http://example.com/type> ?o } }'
+        )
+
+        self.assertEqual(results, ('_g',
+            'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
+            '?s <http://example.com/type> ?o } }'
+        ))
+
+    def test_0001_simple_clean(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE { GRAPH ?_g {'
+            '?s <http://example.com/type> ?o } }'
+        )
+
+        self.assertTrue(results[0].startswith('_g'))
+        self.assertTrue(re.match(
+            'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE { GRAPH \\?_g[0-9]* {'
+            '\\?s <http://example.com/type> \\?o } }',
+            results[1]
+        ))
+
+    def test_0002_complete_clean(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o }'
+        )
+
+        self.assertTrue(results[0].startswith('_g'))
+        self.assertTrue(re.search(
+            'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE \\{ GRAPH \\?_g[0-9]* \\{ '
+            '\\?s <http://example.com/type> \\?o \\} \\}',
+            results[1]
+        ))

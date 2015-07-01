@@ -1,6 +1,11 @@
+from random import randint
 import urllib
+import re
 from urlparse import urljoin
+
 import rdflib
+from pyparsing import ParseException
+from rdflib.plugins.sparql import parser
 
 import pmr2.rdf
 
@@ -44,3 +49,47 @@ def clear(graph_iri):
     """
 
     return 'CLEAR GRAPH <%s>' % (quote_iri(graph_iri))
+
+def _add_graph_projection(statement, projection):
+    return re.sub('SELECT', 'SELECT ?' + projection,
+        statement, flags=re.I)
+
+def _add_graph_graph_pattern(statement, projection):
+    return re.sub('SELECT([^{]*){(.*)}',
+        'SELECT ?%s\\1{ GRAPH ?%s {\\2} }' % (projection, projection),
+        statement, flags=re.I)
+
+def sanitize_select(statement):
+    """
+    Take a select statement and transform it into a select query that
+    will return the graph component associated with the term.
+    """
+
+    try:
+        parsed = parser.parseQuery(statement)
+    except ParseException:
+        return None
+
+    part = parsed[1]['where'].get('part')
+    if not part:
+        # Looks like a null query, not supported.
+        return None
+
+    projections = {str(s['var']) for s in parsed[1]['projection']}
+
+    if part[0].name == 'GraphGraphPattern':
+        projection = str(part[0].term)
+        if projection not in projections:
+            # retry after adding.
+            return sanitize_select(_add_graph_projection(statement,
+                projection))
+        # return the graph token built-in and the statement.
+        return projection, statement
+
+    projection = None
+    if projection in projections:
+        # just abort for now.
+        return None
+
+    projection = '_g' + str(randint(0, 100000))
+    return sanitize_select(_add_graph_graph_pattern(statement, projection))
