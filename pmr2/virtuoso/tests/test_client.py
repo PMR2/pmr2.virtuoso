@@ -27,19 +27,6 @@ class ClientTestCase(unittest.TestCase):
         self.assertEqual(client.portal, self.portal)
         self.assertEqual(client.endpoint, u'http://nohost/sparql')
 
-    def test_0001_query_construction(self):
-        client = zope.component.getMultiAdapter((self.portal, self.settings),
-            ISparqlClient)
-        q = client.format_query('?s ?p ?o', '?s ?p ?o').strip()
-        self.assertEqual(q, ''
-            'SELECT ?_g ?s ?p ?o\n'
-            'WHERE {\n'
-            '    GRAPH ?_g {\n'
-            '        ?s ?p ?o\n'
-            '    }\n'
-            '}'
-        )
-
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(ClientTestCase))

@@ -157,12 +157,39 @@ class SparqlReconstructionTestCase(unittest.TestCase):
 
     def test_0002_complete_clean(self):
         results = sparql.sanitize_select(
-            'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o }'
+            'SELECT ?s ?p ?q WHERE {'
+            '?s <http://example.com/type> ?o }'
         )
 
         self.assertTrue(results[0].startswith('_g'))
         self.assertTrue(re.search(
-            'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE \\{ GRAPH \\?_g[0-9]* \\{ '
+            'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE \\{ GRAPH \\?_g[0-9]* \\{'
             '\\?s <http://example.com/type> \\?o \\} \\}',
             results[1]
+        ))
+
+    def test_7000_chained(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o };'
+            'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o }'
+        )
+        self.assertIsNone(results)
+
+    def test_8000_not_select(self):
+        self.assertIsNone(sparql.sanitize_select(
+            'CLEAR GRAPH <http://example.com/graph>'
+        ))
+
+    def test_9000_invalid(self):
+        self.assertIsNone(sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE {'
+            '?s <http://example.com/type> ?o '
+        ))
+        self.assertIsNone(sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE '
+            '?s <http://example.com/type> ?o }'
+        ))
+        self.assertIsNone(sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE {'
+            '?s http://example.com/type> ?o >'
         ))

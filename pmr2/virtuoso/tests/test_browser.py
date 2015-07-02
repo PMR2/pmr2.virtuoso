@@ -60,9 +60,10 @@ class ClientBrowserTestCase(unittest.TestCase):
         self.assertIn('Execute', results)
 
     def test_0100_form_submit(self):
-        # doesn't matter what these are, as we use dummy values.
-        self.request.form['form.widgets.query_variable'] = '?o'
-        self.request.form['form.widgets.triple_pattern'] = '?s ?p ?o'
+        # doesn't matter what these are, as we use dummy values, as long
+        # as the graph var is determined.
+        self.request.form['form.widgets.statement'] = \
+            'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'
         self.request.form['form.buttons.execute'] = 1
         self.request.method = 'POST'
         form = SparqlClientForm(self.portal, self.request)
@@ -70,8 +71,12 @@ class ClientBrowserTestCase(unittest.TestCase):
         results = form()
         self.assertEqual(
             len(results.split('http://nohost/plone/workspace/virtuoso_test')),
-            3)
+            5) # 4 of these in total.
         self.assertIn('http://example.com/object', results)
         self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
             results)
 
+    def test_1000_form_submit_mime(self):
+        portal_url = self.portal.absolute_url()
+        #self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
+        #self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')

@@ -14,15 +14,9 @@ from pmr2.virtuoso.interfaces import ISparqlClient
 
 class ISparqlClientForm(zope.interface.Interface):
 
-    query_variable = zope.schema.TextLine(
-        title=u'Query Variables',
-        description=u'List out the query variables to be returned for the '
-            'query.',
-    )
-
-    triple_pattern = zope.schema.Text(
-        title=u'Triple pattern',
-        description=u'The triple pattern section of the query',
+    statement = zope.schema.Text(
+        title=u'SPARQL Select Statement',
+        description=u'The SPARQL statement to pass into query.',
     )
 
 
@@ -44,12 +38,14 @@ class SparqlClientForm(PostForm):
             self.status = self.formErrorsMessage
             return
 
+        statement = data['statement']
+
         gs = zope.component.getUtility(IPMR2GlobalSettings)
         settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
         portal = self.context  # XXX assumption based on current zcml
         client = zope.component.getMultiAdapter((portal, settings),
             ISparqlClient)
 
-        results = client.restricted_select(**data)
+        results = client.restricted_select(statement)
 
         self.results = results

@@ -28,6 +28,8 @@
                 <tr tal:repeat="
                     items view/results/results/filtered_bindings">
                   <td tal:repeat="v items/values" tal:content="v"></td>
+                  <td><a tal:attributes="href items/url">
+                    [source]</a></td>
                 </tr>
               </tbody>
             </table>
