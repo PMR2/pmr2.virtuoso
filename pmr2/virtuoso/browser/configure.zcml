@@ -39,6 +39,14 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+      name="pmr2_virtuoso_search"
+      class=".client.SparqlClientForm"
+      layer="..interfaces.ISparqlJsonLayer"
+      permission="zope2.View"
+      />
+
   <!-- note view -->
 
   <!--
