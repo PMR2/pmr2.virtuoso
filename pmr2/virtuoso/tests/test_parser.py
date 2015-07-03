@@ -2,6 +2,7 @@ from os.path import join, dirname
 import unittest
 
 from pmr2.virtuoso import parser
+from pmr2.virtuoso import testing
 
 
 class ParserTestCase(unittest.TestCase):
@@ -9,7 +10,7 @@ class ParserTestCase(unittest.TestCase):
     def setUp(self):
         self.r1 = {}
         for fn in ['simple.n3', 'simple.rdf', 'embedded.rdf']:
-            with open(join(dirname(__file__), 'data', '0', fn)) as fd:
+            with open(join(dirname(testing.__file__), 'data', '0', fn)) as fd:
                 self.r1[fn] = fd.read()
 
     def test_simple_rdf_parse(self):

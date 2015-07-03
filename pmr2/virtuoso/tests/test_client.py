@@ -5,7 +5,7 @@ import zope.component
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 from pmr2.virtuoso import engine
 from pmr2.virtuoso.interfaces import ISparqlClient
-from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
+from pmr2.virtuoso.testing.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
 
 
 class ClientTestCase(unittest.TestCase):

@@ -5,6 +5,7 @@ from os.path import dirname, join
 from pmr2.rdf.base import RdfXmlObject
 from pmr2.virtuoso import parser
 from pmr2.virtuoso import sparql
+from pmr2.virtuoso import testing
 
 
 class SparqlTestCase(unittest.TestCase):
@@ -16,7 +17,7 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_insert_special(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'special_cases.xml')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)
@@ -36,7 +37,7 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_iri_escape(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'injection.rdf')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)
@@ -51,7 +52,7 @@ class SparqlTestCase(unittest.TestCase):
         self.assertIn('%0ACLEAR%20GRAPH%20%3Chttp', result)
 
     def test_iri_escape_n3(self):
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'complex.n3')) as fd:
             rawstr = fd.read()
         graph = parser.parse(rawstr)
@@ -73,7 +74,7 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_n3_insert(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'multi.rdf')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)
@@ -92,7 +93,7 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_n3_insert_base(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'multi.rdf')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)
@@ -112,7 +113,7 @@ class SparqlTestCase(unittest.TestCase):
 
     def test_n3_insert_nested_path(self):
         obj = RdfXmlObject()
-        with open(join(dirname(__file__),
+        with open(join(dirname(testing.__file__),
                 'data', '0', 'multi.rdf')) as fd:
             rawstr = fd.read()
         obj.parse(rawstr)

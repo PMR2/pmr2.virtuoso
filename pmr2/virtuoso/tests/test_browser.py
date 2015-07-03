@@ -8,7 +8,7 @@ from pmr2.virtuoso.client import PortalSparqlClient
 from pmr2.virtuoso.browser.client import SparqlClientForm
 from pmr2.virtuoso.interfaces import ISparqlClient
 from pmr2.virtuoso.interfaces import ISettings
-from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
+from pmr2.virtuoso.testing.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
 
 dummy_response = {
     u'head': {
@@ -31,6 +31,7 @@ dummy_response = {
         ],
     }
 }
+
 
 class DummyPortalSparqlClient(PortalSparqlClient):
 

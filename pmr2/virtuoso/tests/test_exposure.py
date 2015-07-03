@@ -13,7 +13,8 @@ from pmr2.app.annotation.interfaces import IExposureFileAnnotator
 from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.annotator import VirtuosoAnnotator
 
-from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_EXPOSURE_INTEGRATION_LAYER
+from pmr2.virtuoso.testing.layer import \
+    PMR2_VIRTUOSO_EXPOSURE_INTEGRATION_LAYER
 from pmr2.testing.base import TestRequest
 
 

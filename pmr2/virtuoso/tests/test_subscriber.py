@@ -12,7 +12,7 @@ from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso import subscriber
 
-from pmr2.virtuoso.tests.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
+from pmr2.virtuoso.testing.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
 
 
 class WorkspaceSubscriberTestCase(unittest.TestCase):

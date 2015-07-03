@@ -6,7 +6,7 @@ from Testing import ZopeTestCase as ztc
 
 from plone.testing import layered
 
-from pmr2.virtuoso.tests import layer
+from pmr2.virtuoso.testing import layer
 
 
 def test_suite():
