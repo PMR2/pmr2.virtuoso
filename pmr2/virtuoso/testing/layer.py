@@ -8,12 +8,21 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing.interfaces import TEST_USER_ID
 from plone.app.testing import helpers
 
+from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+
 from pmr2.app.workspace.content import WorkspaceContainer
 from pmr2.app.workspace.content import Workspace
 from pmr2.app.workspace.interfaces import IStorageUtility
+from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.workspace.tests.layer import WORKSPACE_BASE_FIXTURE
 from pmr2.app.exposure.tests.layer import EXPOSURE_FIXTURE
+
+from pmr2.virtuoso.browser.client import SparqlClientForm
+from pmr2.virtuoso.interfaces import ISparqlClient
+from pmr2.virtuoso.interfaces import ISettings
+
+from pmr2.virtuoso.testing.dummy import DummyPortalSparqlClient
 
 
 class VirtuosoLayer(PloneSandboxLayer):
@@ -41,6 +50,23 @@ class VirtuosoLayer(PloneSandboxLayer):
         w = Workspace('virtuoso_test')
         w.storage = 'dummy_storage' 
         portal.workspace['virtuoso_test'] = w
+
+        gs = zope.component.getUtility(IPMR2GlobalSettings)
+        self.settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
+        self.default_client = zope.component.getMultiAdapter(
+            (portal, self.settings), ISparqlClient)
+        sm = portal.getSiteManager()
+        sm.unregisterAdapter(self.default_client, (IPloneSiteRoot, ISettings),
+            ISparqlClient)
+        sm.registerAdapter(DummyPortalSparqlClient,
+            (IPloneSiteRoot, ISettings), ISparqlClient)
+
+    def tearDownPloneSite(self, portal):
+        sm = portal.getSiteManager()
+        sm.unregisterAdapter(DummyPortalSparqlClient,
+            (IPloneSiteRoot, ISettings), ISparqlClient)
+        sm.registerAdapter(self.default_client, (IPloneSiteRoot, ISettings),
+            ISparqlClient)
 
 PMR2_VIRTUOSO_FIXTURE = VirtuosoLayer()
 

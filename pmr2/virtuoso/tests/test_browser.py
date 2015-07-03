@@ -1,42 +1,18 @@
 import unittest
 
 import zope.component
-from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
+from plone.testing.z2 import Browser
+
+from Products.CMFCore.utils import getToolByName
+
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 
 from pmr2.app.settings.interfaces import IPMR2GlobalSettings
-from pmr2.virtuoso.client import PortalSparqlClient
 from pmr2.virtuoso.browser.client import SparqlClientForm
 from pmr2.virtuoso.interfaces import ISparqlClient
 from pmr2.virtuoso.interfaces import ISettings
 from pmr2.virtuoso.testing.layer import PMR2_VIRTUOSO_INTEGRATION_LAYER
-
-dummy_response = {
-    u'head': {
-        u'link': [],
-        u'vars': [u'_g', u'o']
-    },
-    u'results': {
-        u'distinct': False,
-        u'ordered': True,
-        u'bindings': [
-            {u'_g': {u'type': u'uri',
-                u'value': u'urn:pmr:virtuoso:/plone/workspace/virtuoso_test'},
-             u'o': {u'type': u'uri', u'value': u'http://example.com/object'}},
-            {u'_g': {u'type': u'uri',
-                u'value': u'urn:pmr:virtuoso:/plone/workspace/virtuoso_test'},
-             u'o': {u'type': u'uri', u'value': u'test.cfg#left'}},
-            {u'_g': {u'type': u'uri',
-                u'value': u'urn:pmr:virtuoso:/plone/workspace/no_permission'},
-             u'o': {u'type': u'uri', u'value': u'http://example.com/object'}},
-        ],
-    }
-}
-
-
-class DummyPortalSparqlClient(PortalSparqlClient):
-
-    def query(self, sparql_query):
-        return dummy_response
 
 
 class ClientBrowserTestCase(unittest.TestCase):
@@ -46,14 +22,8 @@ class ClientBrowserTestCase(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['portal'].REQUEST
-        gs = zope.component.getUtility(IPMR2GlobalSettings)
-        self.settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
-        sm = zope.component.hooks.getSiteManager()
-        sm.registerAdapter(DummyPortalSparqlClient,
-            (IPloneSiteRoot, ISettings), ISparqlClient)
 
-    def tearDown(self):
-        pass
+        self.testbrowser = Browser(self.layer['portal'])
 
     def test_0000_form_render(self):
         form = SparqlClientForm(self.portal, self.request)
@@ -77,7 +47,13 @@ class ClientBrowserTestCase(unittest.TestCase):
         self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
             results)
 
-    def test_1000_form_submit_mime(self):
+    def test_0101_browser_submit_noperm(self):
         portal_url = self.portal.absolute_url()
-        #self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
-        #self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')
+        self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')
+        self.testbrowser.getControl(name='form.widgets.statement').value = \
+            'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'
+        self.testbrowser.getControl(name='form.buttons.execute').click()
+        results = self.testbrowser.contents
+        self.assertEqual(
+            len(results.split('http://nohost/plone/workspace/virtuoso_test')),
+            1) # this is wrong, but we are just testing functionality.
