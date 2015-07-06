@@ -1,3 +1,5 @@
+import json
+
 import zope.component
 import zope.interface
 import zope.schema
@@ -14,7 +16,7 @@ from pmr2.virtuoso.interfaces import ISparqlClient
 
 class ISparqlClientForm(zope.interface.Interface):
 
-    statement = zope.schema.Text(
+    query = zope.schema.Text(
         title=u'SPARQL Select Statement',
         description=u'The SPARQL statement to pass into query.',
     )
@@ -28,6 +30,9 @@ class SparqlClientForm(PostForm):
 
     results = None
 
+    def update(self):
+        super(SparqlClientForm, self).update()
+
     @z3c.form.button.buttonAndHandler(u'Execute', name='execute')
     def handleExecute(self, action):
         """
@@ -38,7 +43,7 @@ class SparqlClientForm(PostForm):
             self.status = self.formErrorsMessage
             return
 
-        statement = data['statement']
+        query = data['query']
 
         gs = zope.component.getUtility(IPMR2GlobalSettings)
         settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
@@ -46,6 +51,41 @@ class SparqlClientForm(PostForm):
         client = zope.component.getMultiAdapter((portal, settings),
             ISparqlClient)
 
-        results = client.restricted_select(statement)
+        results = client.restricted_select(query)
 
         self.results = results
+
+
+class JsonSparqlClientForm(SparqlClientForm):
+
+    def authenticate(self):
+        return True
+
+    def extractQuery(self):
+        query = self.request.form.get('query')
+        if query:
+            return query
+
+        stdin = getattr(request, 'stdin', None)
+        if stdin:
+            stdin.seek(0)
+            query = stdin.read()
+
+        return query
+
+    def update(self):
+        query = self.extractQuery()
+        if query:
+            self.request.form['form.widgets.query'] = query
+            self.request.form['form.buttons.execute'] = 'Execute'
+        super(JsonSparqlClientForm, self).update()
+
+    def render(self):
+        if not self.results:
+            return ''
+
+        # non-standard
+        self.results['head'].pop('graph_var')
+        filtered = self.results['results'].pop('filtered_bindings')
+        self.results['results']['bindings'] = list(filtered())
+        return json.dumps(self.results)

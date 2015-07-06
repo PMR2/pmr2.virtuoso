@@ -4,6 +4,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="pmr2.virtuoso">
 
+  <include package="pmr2.layer"/>
+
   <include package=".browser" />
   <include file="profiles.zcml" />
 

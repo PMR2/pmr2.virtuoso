@@ -42,7 +42,7 @@
   <browser:page
       for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
       name="pmr2_virtuoso_search"
-      class=".client.SparqlClientForm"
+      class=".client.JsonSparqlClientForm"
       layer="..interfaces.ISparqlJsonLayer"
       permission="zope2.View"
       />

@@ -4,6 +4,7 @@ from .interfaces import ISparqlJsonLayer
 
 class SparqlJsonLayerApplier(ConditionalLayerApplierBase):
 
+    layer = ISparqlJsonLayer
+
     def condition(self, request):
-        if request.get('HTTP_ACCEPT') == 'application/sparql-results+json':
-            return ISparqlJsonLayer
+        return request.get('HTTP_ACCEPT') == 'application/sparql-results+json'
