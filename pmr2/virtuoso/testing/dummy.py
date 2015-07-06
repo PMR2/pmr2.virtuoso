@@ -1,7 +1,7 @@
 from pmr2.virtuoso.client import PortalSparqlClient
 
-dummy_response = {
-    u'head': {
+def default_dummy_response():
+    return { u'head': {
         u'link': [],
         u'vars': [u'_g', u'o']
     },
@@ -19,11 +19,17 @@ dummy_response = {
                 u'value': u'urn:pmr:virtuoso:/plone/workspace/no_permission'},
              u'o': {u'type': u'uri', u'value': u'http://example.com/object'}},
         ],
-    }
-}
+    } }
 
 
 class DummyPortalSparqlClient(PortalSparqlClient):
 
+    def __init__(self, *a, **kw):
+        super(DummyPortalSparqlClient, self).__init__(*a, **kw)
+        self.reset()
+
+    def reset(self):
+        self.dummy_response = default_dummy_response()
+
     def query(self, sparql_query):
-        return dummy_response
+        return self.dummy_response

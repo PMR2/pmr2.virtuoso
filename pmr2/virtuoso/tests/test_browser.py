@@ -56,4 +56,28 @@ class ClientBrowserTestCase(unittest.TestCase):
         results = self.testbrowser.contents
         self.assertEqual(
             len(results.split('http://nohost/plone/workspace/virtuoso_test')),
-            1) # this is wrong, but we are just testing functionality.
+            1) # nothing for now, no permission
+
+    def test_0102_browser_submit(self):
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        wft = getToolByName(self.portal, 'portal_workflow')
+        wft.doActionFor(self.portal.workspace.virtuoso_test, 'publish')
+        setRoles(self.portal, TEST_USER_ID, ['Member'])
+
+        # Force a commit to make things work.
+        self.portal.workspace.virtuoso_test.reindexObject()
+        import transaction
+        transaction.commit()
+
+        portal_url = self.portal.absolute_url()
+        self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')
+        self.testbrowser.getControl(name='form.widgets.statement').value = \
+            'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'
+        self.testbrowser.getControl(name='form.buttons.execute').click()
+        results = self.testbrowser.contents
+        self.assertEqual(
+            len(results.split('http://nohost/plone/workspace/virtuoso_test')),
+            5)
+        self.assertIn('http://example.com/object', results)
+        self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
+            results)
