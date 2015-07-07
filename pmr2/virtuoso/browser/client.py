@@ -66,7 +66,7 @@ class JsonSparqlClientForm(SparqlClientForm):
         if query:
             return query
 
-        stdin = getattr(request, 'stdin', None)
+        stdin = getattr(self.request, 'stdin', None)
         if stdin:
             stdin.seek(0)
             query = stdin.read()
@@ -87,5 +87,5 @@ class JsonSparqlClientForm(SparqlClientForm):
         # non-standard
         self.results['head'].pop('graph_var')
         filtered = self.results['results'].pop('filtered_bindings')
-        self.results['results']['bindings'] = list(filtered())
+        self.results['results']['bindings'] = list(filtered(standard=True))
         return json.dumps(self.results)

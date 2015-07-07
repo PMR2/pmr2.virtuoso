@@ -69,7 +69,7 @@ class PortalSparqlClient(SparqlClient):
 
         bindings = results['results']['bindings']
         vars_ = results['head']['vars']
-        def bindings_filter():
+        def bindings_filter(standard=False):
             for binding in bindings:
                 g = binding.get(term, {}).get('value')
                 if not g:
@@ -85,8 +85,12 @@ class PortalSparqlClient(SparqlClient):
                 # replace the graph value with the public URL
                 binding[term]['value'] = brain[0].getURL()
 
+                if standard:
+                    yield binding
+                    continue
+
                 # make new copies of everything
-                yield {
+                result = {
                     # not quite original but...
                     'original': binding,
                     # only keep the graph value if query is not sanitized.
@@ -94,6 +98,7 @@ class PortalSparqlClient(SparqlClient):
                         if not sanitized or v != term],
                     'url': binding[term]['value'],
                 }
+                yield result
 
         if sanitized:
             # pop out the graph term if the query was sanitized, which

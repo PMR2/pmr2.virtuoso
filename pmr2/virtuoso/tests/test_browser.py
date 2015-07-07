@@ -1,6 +1,7 @@
 import json
 import unittest
 import urllib
+from cStringIO import StringIO
 
 import zope.component
 from plone.testing.z2 import Browser
@@ -85,7 +86,8 @@ class ClientBrowserTestCase(unittest.TestCase):
         self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
             results)
 
-    def test_1000_form_submit_mime(self):
+    def test_1000_form_submit_mime_query(self):
+        # self.publish()
         portal_url = self.portal.absolute_url()
         self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
         self.testbrowser.open(portal_url + '/pmr2_virtuoso_search?query=' +
@@ -93,9 +95,32 @@ class ClientBrowserTestCase(unittest.TestCase):
                 'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'))
         results = self.testbrowser.contents
         jr = json.loads(results)  # is JSON
-        self.assertEqual(
-            len(results.split('http://nohost/plone/workspace/virtuoso_test')),
-            7)  # should be less than this, due to extra info
-        self.assertIn('http://example.com/object', results)
-        self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
-            results)
+        self.assertEqual(jr, {"head": {"link": [], "vars": ["_g", "o"]},
+            "results": {"ordered": True, "distinct": False, "bindings": [
+                {"_g": {"type": "uri",
+                    "value": "http://nohost/plone/workspace/virtuoso_test"},
+                    "o": {"type": "uri", "value": "http://example.com/object"}},
+                {"_g": {"type": "uri",
+                    "value": "http://nohost/plone/workspace/virtuoso_test"},
+                    "o": {"type": "uri", "value": "test.cfg#left"}}
+            ],
+        }})
+
+    def test_1001_form_submit_mime_stdin(self):
+        # self.publish()
+        portal_url = self.portal.absolute_url()
+        self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
+        data = 'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'
+        self.testbrowser.open(portal_url + '/pmr2_virtuoso_search', data)
+        results = self.testbrowser.contents
+        jr = json.loads(results)  # is JSON
+        self.assertEqual(jr, {"head": {"link": [], "vars": ["_g", "o"]},
+            "results": {"ordered": True, "distinct": False, "bindings": [
+                {"_g": {"type": "uri",
+                    "value": "http://nohost/plone/workspace/virtuoso_test"},
+                    "o": {"type": "uri", "value": "http://example.com/object"}},
+                {"_g": {"type": "uri",
+                    "value": "http://nohost/plone/workspace/virtuoso_test"},
+                    "o": {"type": "uri", "value": "test.cfg#left"}}
+            ],
+        }})
