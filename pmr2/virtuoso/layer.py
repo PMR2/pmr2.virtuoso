@@ -7,4 +7,7 @@ class SparqlJsonLayerApplier(ConditionalLayerApplierBase):
     layer = ISparqlJsonLayer
 
     def condition(self, request):
-        return request.get('HTTP_ACCEPT') == 'application/sparql-results+json'
+        return request.get('HTTP_ACCEPT') in [
+                'application/sparql-results+json',
+                'application/json',
+            ]
