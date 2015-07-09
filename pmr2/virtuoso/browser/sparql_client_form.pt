@@ -14,7 +14,16 @@
 
     <metal:main fill-slot="formbottom">
 
-        <tal:if tal:condition="view/results">
+      <tal:if tal:condition="view/results">
+        <tal:if tal:condition="exists:view/results/error">
+          <dl class="portalMessage error">
+            <dt>Error</dt>
+            <dd tal:content="view/results/error">
+            </dd>
+          <dl>
+        </tal:if>
+
+        <tal:if tal:condition="not:exists:view/results/error">
           <div>
             Query results:
             <table class="table">
@@ -35,8 +44,9 @@
             </table>
           </div>
         </tal:if>
+      </tal:if>
 
-        <span tal:replace="structure context/@@authenticator/authenticator"/>
+      <span tal:replace="structure context/@@authenticator/authenticator"/>
     </metal:main>
 
   </tal:block>

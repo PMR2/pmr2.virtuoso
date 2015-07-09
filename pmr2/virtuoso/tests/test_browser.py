@@ -86,6 +86,16 @@ class ClientBrowserTestCase(unittest.TestCase):
         self.assertNotIn('urn:pmr:virtuoso:/plone/workspace/no_permission',
             results)
 
+    def test_0150_bad_sparql(self):
+        # self.publish()
+        portal_url = self.portal.absolute_url()
+        self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')
+        self.testbrowser.getControl(name='form.widgets.query').value = \
+            'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o }'
+        self.testbrowser.getControl(name='form.buttons.execute').click()
+        results = self.testbrowser.contents
+        self.assertIn('<dt>Error</dt>', results)
+
     def test_1000_form_submit_mime_query(self):
         # self.publish()
         portal_url = self.portal.absolute_url()
@@ -124,3 +134,13 @@ class ClientBrowserTestCase(unittest.TestCase):
                     "o": {"type": "uri", "value": "test.cfg#left"}}
             ],
         }})
+
+    def test_1500_error_handling(self):
+        # self.publish()
+        portal_url = self.portal.absolute_url()
+        self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
+        data = 'SELECT ?_g ?s ?p ?o WHERE GRAPH ?_g { ?s ?p ?o } }'
+        self.testbrowser.open(portal_url + '/pmr2_virtuoso_search', data)
+        results = self.testbrowser.contents
+        jr = json.loads(results)  # is JSON
+        self.assertEqual(jr, {"error": "invalid SPARQL query"})

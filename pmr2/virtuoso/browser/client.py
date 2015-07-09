@@ -83,6 +83,8 @@ class JsonSparqlClientForm(SparqlClientForm):
     def render(self):
         if not self.results:
             return ''
+        if 'error' in self.results:
+            return json.dumps({"error": self.results['error']})
 
         # non-standard
         self.results['head'].pop('graph_var')

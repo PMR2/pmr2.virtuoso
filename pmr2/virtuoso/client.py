@@ -53,8 +53,7 @@ class PortalSparqlClient(SparqlClient):
         q = sanitize_select(statement)
 
         if not q:
-            # TODO come up with a meaningful way to represent errors.
-            return {}
+            return {'error': 'invalid SPARQL query'}
 
         term, stmt = q
 
