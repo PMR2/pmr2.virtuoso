@@ -194,3 +194,19 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             'SELECT ?s ?p ?q WHERE {'
             '?s http://example.com/type> ?o >'
         ))
+
+    def test_5000_multiline(self):
+        query = (
+            'SELECT ?me\n'
+            'WHERE { \n'
+            '?me <http://www.obofoundry.org/ro/ro.owl#located_in> '
+                '<http://identifiers.org/fma/FMA:17693> \n'
+            '}\n'
+        )
+        node, result = sparql.sanitize_select(query)
+        self.assertTrue(result.startswith('SELECT ?_g'))
+        self.assertTrue(result.endswith('{ \n'
+            '?me <http://www.obofoundry.org/ro/ro.owl#located_in> '
+            '<http://identifiers.org/fma/FMA:17693> \n'
+            '} }\n'
+        ))

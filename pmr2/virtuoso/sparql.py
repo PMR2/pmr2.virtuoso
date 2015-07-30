@@ -55,7 +55,7 @@ def _add_graph_projection(statement, projection):
         statement, flags=re.I)
 
 def _add_graph_graph_pattern(statement, projection):
-    return re.sub('SELECT([^{]*){(.*)}',
+    return re.sub('SELECT([^{]*){([^}]*)}',
         'SELECT ?%s\\1{ GRAPH ?%s {\\2} }' % (projection, projection),
         statement, flags=re.I)
 
