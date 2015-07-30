@@ -1,0 +1,14 @@
+@prefix ex: <http://ns.example.com/ex/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix : <bar#> .
+
+<a2> <http://example.org/ns/b2> <c2> .
+<a3> <b3> <c3> .
+:a4 :b4 :c4 .
+:a5 :b5 :c5 .
+:a ex:is ( "apple" "banana" ) .
+:c :d
+  [ rdf:first "apple";
+    rdf:rest [ rdf:first "banana";
+               rdf:rest rdf:nil ]
+  ] .
