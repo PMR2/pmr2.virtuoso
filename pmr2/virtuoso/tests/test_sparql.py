@@ -205,8 +205,32 @@ class SparqlReconstructionTestCase(unittest.TestCase):
         )
         node, result = sparql.sanitize_select(query)
         self.assertTrue(result.startswith('SELECT ?_g'))
+        self.assertTrue('GRAPH' in result)
         self.assertTrue(result.endswith('{ \n'
             '?me <http://www.obofoundry.org/ro/ro.owl#located_in> '
             '<http://identifiers.org/fma/FMA:17693> \n'
+            '} }\n'
+        ))
+
+    def test_5001_multiline_with_prefix(self):
+        query = (
+            'PREFIX ro: <http://www.obofoundry.org/ro/ro.owl#>\n'
+            'PREFIX fma: <http://identifiers.org/fma/>\n'
+            '\n'
+            'SELECT ?me\n'
+            'WHERE {\n'
+            '    ?me ro:located_in fma:FMA:17693\n'
+            '}\n'
+        )
+        node, result = sparql.sanitize_select(query)
+        self.assertTrue(result.startswith(
+            'PREFIX ro: <http://www.obofoundry.org/ro/ro.owl#>\n'
+            'PREFIX fma: <http://identifiers.org/fma/>\n'
+            '\n'
+            'SELECT ?_g'
+        ))
+        self.assertTrue('GRAPH' in result)
+        self.assertTrue(result.endswith('{\n'
+            '    ?me ro:located_in fma:FMA:17693\n'
             '} }\n'
         ))
