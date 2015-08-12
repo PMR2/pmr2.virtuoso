@@ -61,11 +61,11 @@ class VirtuosoLayer(PloneSandboxLayer):
 
         gs = zope.component.getUtility(IPMR2GlobalSettings)
         self.settings = zope.component.getAdapter(gs, name='pmr2_virtuoso')
-        self.default_client = zope.component.getMultiAdapter(
-            (portal, self.settings), ISparqlClient)
+        #self.default_client = zope.component.getMultiAdapter(
+        #    (portal, self.settings), ISparqlClient)
         sm = portal.getSiteManager()
-        sm.unregisterAdapter(self.default_client, (IPloneSiteRoot, ISettings),
-            ISparqlClient)
+        #sm.unregisterAdapter(self.default_client, (IPloneSiteRoot, ISettings),
+        #    ISparqlClient)
         sm.registerAdapter(DummyPortalSparqlClient,
             (IPloneSiteRoot, ISettings), ISparqlClient)
 
@@ -73,13 +73,13 @@ class VirtuosoLayer(PloneSandboxLayer):
         sm = portal.getSiteManager()
         sm.unregisterAdapter(DummyPortalSparqlClient,
             (IPloneSiteRoot, ISettings), ISparqlClient)
-        sm.registerAdapter(self.default_client, (IPloneSiteRoot, ISettings),
-            ISparqlClient)
+        #sm.registerAdapter(self.default_client, (IPloneSiteRoot, ISettings),
+        #    ISparqlClient)
 
 PMR2_VIRTUOSO_FIXTURE = VirtuosoLayer()
 
 PMR2_VIRTUOSO_INTEGRATION_LAYER = IntegrationTesting(
-    bases=(PMR2_VIRTUOSO_FIXTURE, FUNCTIONAL_TESTING),
+    bases=(FUNCTIONAL_TESTING, PMR2_VIRTUOSO_FIXTURE,),
     name="pmr2.virtuoso:integration",)
 
 
