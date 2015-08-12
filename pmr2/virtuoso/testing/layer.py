@@ -7,6 +7,7 @@ from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing.interfaces import TEST_USER_ID
 from plone.app.testing import helpers
+from plone.testing.z2 import FUNCTIONAL_TESTING
 
 from Products.CMFPlone.interfaces.siteroot import IPloneSiteRoot
 
@@ -17,6 +18,7 @@ from pmr2.app.settings.interfaces import IPMR2GlobalSettings
 
 from pmr2.app.workspace.tests.layer import WORKSPACE_BASE_FIXTURE
 from pmr2.app.exposure.tests.layer import EXPOSURE_FIXTURE
+from pmr2.app.tests.layer import PMR2_FIXTURE
 
 from pmr2.virtuoso.browser.client import SparqlClientForm
 from pmr2.virtuoso.interfaces import ISparqlClient
@@ -27,11 +29,16 @@ from pmr2.virtuoso.testing.dummy import DummyPortalSparqlClient
 
 class VirtuosoLayer(PloneSandboxLayer):
 
-    defaultBases = (WORKSPACE_BASE_FIXTURE,)
+    defaultBases = (PMR2_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
         import pmr2.virtuoso
+        import pmr2.z3cform
+        import pmr2.app
         self.loadZCML(package=pmr2.virtuoso)
+        self.loadZCML(package=pmr2.z3cform)
+        self.loadZCML(package=pmr2.app)
+        self.loadZCML('test.zcml', package=pmr2.app.workspace.tests)
 
         # until pmr2.z3cform has a layer, this is needed to fully render
         # the forms.
@@ -49,6 +56,7 @@ class VirtuosoLayer(PloneSandboxLayer):
 
         w = Workspace('virtuoso_test')
         w.storage = 'dummy_storage' 
+        portal.workspace = WorkspaceContainer('workspace')
         portal.workspace['virtuoso_test'] = w
 
         gs = zope.component.getUtility(IPMR2GlobalSettings)
@@ -71,7 +79,8 @@ class VirtuosoLayer(PloneSandboxLayer):
 PMR2_VIRTUOSO_FIXTURE = VirtuosoLayer()
 
 PMR2_VIRTUOSO_INTEGRATION_LAYER = IntegrationTesting(
-    bases=(PMR2_VIRTUOSO_FIXTURE,), name="pmr2.virtuoso:integration",)
+    bases=(PMR2_VIRTUOSO_FIXTURE, FUNCTIONAL_TESTING),
+    name="pmr2.virtuoso:integration",)
 
 
 class VirtuosoExposureLayer(PloneSandboxLayer):

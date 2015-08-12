@@ -87,7 +87,7 @@ class ClientBrowserTestCase(unittest.TestCase):
             results)
 
     def test_0150_bad_sparql(self):
-        # self.publish()
+        self.publish()
         portal_url = self.portal.absolute_url()
         self.testbrowser.open(portal_url + '/pmr2_virtuoso_search')
         self.testbrowser.getControl(name='form.widgets.query').value = \
@@ -97,7 +97,7 @@ class ClientBrowserTestCase(unittest.TestCase):
         self.assertIn('<dt>Error</dt>', results)
 
     def test_1000_form_submit_mime_query(self):
-        # self.publish()
+        self.publish()
         portal_url = self.portal.absolute_url()
         self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
         self.testbrowser.open(portal_url + '/pmr2_virtuoso_search?query=' +
@@ -117,7 +117,7 @@ class ClientBrowserTestCase(unittest.TestCase):
         }})
 
     def test_1001_form_submit_mime_stdin(self):
-        # self.publish()
+        self.publish()
         portal_url = self.portal.absolute_url()
         self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
         data = 'SELECT ?_g ?s ?p ?o WHERE { GRAPH ?_g { ?s ?p ?o } }'
@@ -136,7 +136,7 @@ class ClientBrowserTestCase(unittest.TestCase):
         }})
 
     def test_1500_error_handling(self):
-        # self.publish()
+        self.publish()
         portal_url = self.portal.absolute_url()
         self.testbrowser.addHeader('Accept', 'application/sparql-results+json')
         data = 'SELECT ?_g ?s ?p ?o WHERE GRAPH ?_g { ?s ?p ?o } }'
