@@ -75,6 +75,13 @@ def sanitize_select(statement):
         # Looks like a null query, not supported.
         return None
 
+    if len(part) > 1:
+        # Multiple parts currently not supported.  If we can easily use
+        # pyparsing to manipulate AND generate the result back into a
+        # string this would have been trivial, but it does not do this
+        # by default
+        return None
+
     projections = {str(s['var']) for s in parsed[1]['projection']}
 
     if part[0].name == 'GraphGraphPattern':

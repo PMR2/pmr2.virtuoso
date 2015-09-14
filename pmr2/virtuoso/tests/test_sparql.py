@@ -169,6 +169,34 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             results[1]
         ))
 
+    def test_0003_dangle_fail(self):
+        # Should be able to wrap the dangled patterns into its own
+        # GraphGraphPattern, but limitations with rdflib and pyparsing
+        # makes this rather impossible to do easily.
+        results = sparql.sanitize_select(
+            'SELECT ?_g ?s ?p ?q ?r ?s ?t WHERE { GRAPH ?_g {'
+            '?s <http://example.com/type> ?o } ?r ?s ?t }'
+        )
+        self.assertIsNone(results)
+
+        #self.assertEqual(results, ('_g',
+        #    'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
+        #    '?s <http://example.com/type> ?o } }'
+        #))
+
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?q WHERE { GRAPH ?_g {'
+            '?s <http://example.com/type> ?o } ?r ?s ?t }'
+        )
+        self.assertIsNone(results)
+
+        #self.assertTrue(results[0].startswith('_g'))
+        #self.assertTrue(re.match(
+        #    'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE { GRAPH \\?_g[0-9]* {'
+        #    '\\?s <http://example.com/type> \\?o } }',
+        #    results[1]
+        #))
+
     def test_7000_chained(self):
         results = sparql.sanitize_select(
             'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o };'
