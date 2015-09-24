@@ -16,6 +16,7 @@ class SparqlJsonLayerApplier(ConditionalLayerApplierBase):
         accepts = parse_accept(request.get('HTTP_ACCEPT', ''))
         for a in accepts:
             if a[0] in acceptable:
+                request.response.setHeader('Content-Type', a[0])
                 return True
 
         return False
