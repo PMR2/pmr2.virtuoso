@@ -1,5 +1,6 @@
 from pmr2.layer.utility import ConditionalLayerApplierBase
 from .interfaces import ISparqlJsonLayer
+from .http import parse_accept
 
 
 class SparqlJsonLayerApplier(ConditionalLayerApplierBase):
@@ -7,7 +8,14 @@ class SparqlJsonLayerApplier(ConditionalLayerApplierBase):
     layer = ISparqlJsonLayer
 
     def condition(self, request):
-        return request.get('HTTP_ACCEPT') in [
-                'application/sparql-results+json',
-                'application/json',
-            ]
+        acceptable = (
+            'application/sparql-results+json',
+            'application/json',
+        )
+
+        accepts = parse_accept(request.get('HTTP_ACCEPT', ''))
+        for a in accepts:
+            if a[0] in acceptable:
+                return True
+
+        return False
