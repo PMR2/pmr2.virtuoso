@@ -132,13 +132,19 @@ class SparqlTestCase(unittest.TestCase):
 
 class SparqlReconstructionTestCase(unittest.TestCase):
 
+    def assertDefaultProjections(self, results):
+        # this may need to be made more robust.
+        projections = results[0]
+        for p in projections:
+            self.assertTrue(p.startswith('_g'))
+
     def test_0000_expected(self):
         results = sparql.sanitize_select(
             'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
             '?s <http://example.com/type> ?o } }'
         )
 
-        self.assertEqual(results, ('_g',
+        self.assertEqual(results, (['_g'],
             'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
             '?s <http://example.com/type> ?o } }'
         ))
@@ -149,7 +155,7 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             '?s <http://example.com/type> ?o } }'
         )
 
-        self.assertTrue(results[0].startswith('_g'))
+        self.assertDefaultProjections(results)
         self.assertTrue(re.match(
             'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE { GRAPH \\?_g[0-9]* {'
             '\\?s <http://example.com/type> \\?o } }',
@@ -162,40 +168,41 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             '?s <http://example.com/type> ?o }'
         )
 
-        self.assertTrue(results[0].startswith('_g'))
+        self.assertDefaultProjections(results)
         self.assertTrue(re.search(
             'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE \\{ GRAPH \\?_g[0-9]* \\{'
             '\\?s <http://example.com/type> \\?o \\} \\}',
             results[1]
         ))
 
-    def test_0003_dangle_fail(self):
-        # Should be able to wrap the dangled patterns into its own
-        # GraphGraphPattern, but limitations with rdflib and pyparsing
-        # makes this rather impossible to do easily.
-        results = sparql.sanitize_select(
+    def test_0003_dangled_section(self):
+        projections, result = sparql.sanitize_select(
             'SELECT ?_g ?s ?p ?q ?r ?s ?t WHERE { GRAPH ?_g {'
             '?s <http://example.com/type> ?o } ?r ?s ?t }'
         )
-        self.assertIsNone(results)
 
-        #self.assertEqual(results, ('_g',
-        #    'SELECT ?_g ?s ?p ?q WHERE { GRAPH ?_g {'
-        #    '?s <http://example.com/type> ?o } }'
-        #))
+        self.assertEqual(len(projections), 2)
+        self.assertDefaultProjections(results)
 
-        results = sparql.sanitize_select(
-            'SELECT ?s ?p ?q WHERE { GRAPH ?_g {'
-            '?s <http://example.com/type> ?o } ?r ?s ?t }'
-        )
-        self.assertIsNone(results)
+        self.assertEqual(re.match(
+            'SELECT \\?_g \\?_g[0-9]* \\?s \\?p \\?q WHERE \\{ GRAPH \\?_g \\{'
+            '\\?s <http://example.com/type> \\?o \\} GRAPH \\?_g[0-9]* \\{'
+            '?r ?s ?t \\} \\}'
+        ))
 
-        #self.assertTrue(results[0].startswith('_g'))
-        #self.assertTrue(re.match(
-        #    'SELECT \\?_g[0-9]* \\?s \\?p \\?q WHERE { GRAPH \\?_g[0-9]* {'
-        #    '\\?s <http://example.com/type> \\?o } }',
-        #    results[1]
-        #))
+    def test_0004_multi_graph(self):
+        # a valid multiple GraphGraphPattern query
+        q = ('SELECT ?_g ?_h ?s ?o ?t ?u WHERE { '
+                'GRAPH ?_g { '
+                    '?s <http://example.com/type> ?o '
+                '} '
+                'GRAPH ?_h { ?s ?t ?u } '
+            '}')
+        projections, result = sparql.sanitize_select(q)
+
+        # valid queries don't change, but projections captured
+        self.assertEqual(projections, ['?_g', '?_h'])
+        self.assertEqual(result, q)
 
     def test_7000_chained(self):
         results = sparql.sanitize_select(
@@ -231,7 +238,7 @@ class SparqlReconstructionTestCase(unittest.TestCase):
                 '<http://identifiers.org/fma/FMA:17693> \n'
             '}\n'
         )
-        node, result = sparql.sanitize_select(query)
+        projections, result = sparql.sanitize_select(query)
         self.assertTrue(result.startswith('SELECT ?_g'))
         self.assertTrue('GRAPH' in result)
         self.assertTrue(result.endswith('{ \n'
@@ -250,7 +257,7 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             '    ?me ro:located_in fma:FMA:17693\n'
             '}\n'
         )
-        node, result = sparql.sanitize_select(query)
+        projections, result = sparql.sanitize_select(query)
         self.assertTrue(result.startswith(
             'PREFIX ro: <http://www.obofoundry.org/ro/ro.owl#>\n'
             'PREFIX fma: <http://identifiers.org/fma/>\n'

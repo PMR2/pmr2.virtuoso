@@ -65,6 +65,10 @@ def sanitize_select(statement):
     will return the graph component associated with the term.
     """
 
+    # XXX this needs a rewrite, we need to properly support multiple
+    # GraphGraphPattern sections, and throw any dangling triple sections
+    # not inside one into a generated one.
+
     try:
         parsed = parser.parseQuery(statement)
     except ParseException:
@@ -84,6 +88,7 @@ def sanitize_select(statement):
 
     projections = {str(s['var']) for s in parsed[1]['projection']}
 
+    # This part ONLY supports the first part.
     if part[0].name == 'GraphGraphPattern':
         projection = str(part[0].term)
         if projection not in projections:
@@ -91,12 +96,15 @@ def sanitize_select(statement):
             return sanitize_select(_add_graph_projection(statement,
                 projection))
         # return the graph token built-in and the statement.
-        return projection, statement
+        # XXX hack to return multiple projections (even though we only
+        # have one here
+        return [projection], statement
 
     projection = None
     if projection in projections:
         # just abort for now.
         return None
 
+    # generate a "random" to hopefully not collide with an existing one
     projection = '_g' + str(randint(0, 100000))
     return sanitize_select(_add_graph_graph_pattern(statement, projection))
