@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.5 - 2016-03-08
+----------------
+
+* Free form SPARQL query, done within a restricted manner to ensure the
+  terms return all correlate to an object within the CMS for permission
+  checking.
+
 0.4 - 2015-05-29
 ----------------
 
