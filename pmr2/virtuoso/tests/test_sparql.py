@@ -197,6 +197,14 @@ class SparqlReconstructionTestCase(unittest.TestCase):
         #    results[1]
         #))
 
+    def test_0100_limit(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } LIMIT 10'
+        )
+        self.assertEqual(results, (
+            'g', 'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } LIMIT 10'
+        ))
+
     def test_7000_chained(self):
         results = sparql.sanitize_select(
             'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o };'
