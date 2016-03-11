@@ -205,6 +205,32 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             'g', 'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } LIMIT 10'
         ))
 
+    def test_0200_from_named(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?o ?g FROM NAMED <http://example.com/graph> '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        )
+        self.assertEqual(results, (
+            'g',
+            'SELECT ?s ?p ?o ?g FROM NAMED <http://example.com/graph> '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        ))
+
+    def test_0201_from_named(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?o ?g '
+            'FROM NAMED <http://example.com/graph1> '
+            'FROM NAMED <http://example.com/graph2> '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        )
+        self.assertEqual(results, (
+            'g',
+            'SELECT ?s ?p ?o ?g '
+            'FROM NAMED <http://example.com/graph1> '
+            'FROM NAMED <http://example.com/graph2> '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        ))
+
     def test_7000_chained(self):
         results = sparql.sanitize_select(
             'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o };'
