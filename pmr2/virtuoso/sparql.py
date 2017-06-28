@@ -23,10 +23,18 @@ def n3(item):
         result = rdflib.URIRef(quote_iri(result))
     return result.n3()
 
+def _prefix_uri(r, prefix):
+    if isinstance(r, rdflib.URIRef):
+        return rdflib.URIRef(urljoin(prefix, r))
+    else:
+        return r
+
 def n3_insert(graph, subject_prefix=None):
     for s, p, o in graph.triples((None, None, None)):
         if subject_prefix:
-            s = rdflib.URIRef(urljoin(subject_prefix, s))
+            s = _prefix_uri(s, subject_prefix)
+            p = _prefix_uri(p, subject_prefix)
+            o = _prefix_uri(o, subject_prefix)
         yield u'%s %s %s .' % (n3(s), n3(p), n3(o))
 
 def insert(graph, graph_iri, subject_prefix=None):

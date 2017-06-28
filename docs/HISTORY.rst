@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.6 - 2017-06-28
+----------------
+
+* Objects also need the URI normalization that subjects got, as it is
+  possible for files to have local references.  Apply this to predicates
+  also as the operation only works on relative URIs.
+
 0.5 - 2016-03-08
 ----------------
 

@@ -91,6 +91,25 @@ class SparqlTestCase(unittest.TestCase):
                 '"Sibling File" .',
         ])
 
+    def test_n3_insert_base_uri_object(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(testing.__file__),
+                'data', '0', 'multi.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+        graph = sorted(sparql.n3_insert(obj.graph))
+
+        self.assertEqual(graph, [
+            u'<#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Metadata File" .',
+            u'<../parent/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Parent File" .',
+            u'<nested/file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Nested File" .',
+            u'<sibling_file#test> <http://purl.org/dc/elements/1.1/title> '
+                '"Sibling File" .',
+        ])
+
     def test_n3_insert_base(self):
         obj = RdfXmlObject()
         with open(join(dirname(testing.__file__),
@@ -127,6 +146,22 @@ class SparqlTestCase(unittest.TestCase):
                 '<http://purl.org/dc/elements/1.1/title> "Nested File" .',
             u'<multi/path/sibling_file#test> '
                 '<http://purl.org/dc/elements/1.1/title> "Sibling File" .',
+        ])
+
+    def test_n3_insert_base_uri_object(self):
+        obj = RdfXmlObject()
+        with open(join(dirname(testing.__file__),
+                'data', '0', 'nested_object.rdf')) as fd:
+            rawstr = fd.read()
+        obj.parse(rawstr)
+        graph = sorted(sparql.n3_insert(obj.graph, 'some/data.xml'))
+        self.assertEqual(graph, [
+            u'<some/data.xml#inner> <http://ns.example.com/target> '
+                '<http://site.example.com/target> .',
+            u'<some/data.xml#inner> <http://ns.example.com/title> '
+                '"Inner Title" .',
+            u'<some/data.xml#root> <http://ns.example.com/is> '
+                '<some/data.xml#inner> .',
         ])
 
 
