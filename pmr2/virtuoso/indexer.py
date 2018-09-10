@@ -56,6 +56,9 @@ class WorkspaceRDFIndexer(BaseRDFIndexer):
         storage = zope.component.getAdapter(self.context, IStorage)
         full_root = base + '/'.join(self.context.getPhysicalPath())
 
+        if len(rdfinfo.__getattribute__('__parent__').getPhysicalPath()) == 1:
+            rdfinfo.__setattr__('__parent__', self.context)
+
         yield sparql.clear(full_root)
 
         for p in (rdfinfo.paths or []):
