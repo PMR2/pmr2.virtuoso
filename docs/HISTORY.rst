@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.7 - ????-??-??
+----------------
+
+* Apply a workaround to ensure parent object is accessible from the
+  indexer, to avoid spurious indexing errors.
+* Provide support for JSON-LD.
+
 0.6 - 2017-06-28
 ----------------
 
