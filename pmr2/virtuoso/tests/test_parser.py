@@ -28,3 +28,21 @@ class ParserTestCase(unittest.TestCase):
     def test_embedded_rdf_parse(self):
         graph = parser.parse(self.r1['embedded.rdf'])
         self.assertEqual(len(list(graph)), 2)
+
+    def test_json_ld(self):
+        json_str = '''
+        {
+            "@context": {
+                "dc": "http://purl.org/dc/terms/",
+                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+            },
+            "@id": "http://example.org/about",
+            "dc:title": {
+                "@language": "en",
+                "@value": "Someone's Homepage"
+            }
+        }
+        '''
+        graph = parser.parse(json_str)
+        self.assertEqual(len(list(graph)), 1)

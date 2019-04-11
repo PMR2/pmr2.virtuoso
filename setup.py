@@ -27,6 +27,7 @@ setup(name='pmr2.virtuoso',
           # -*- Extra requirements: -*-
           'pmr2.app',
           'pmr2.rdf',
+          'rdflib-jsonld',
           'virtuoso==0.12.6pmr',
           'sqlalchemy>=0.6.0',
           'requests>=1.0.0',

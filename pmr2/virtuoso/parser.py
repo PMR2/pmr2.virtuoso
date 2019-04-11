@@ -22,6 +22,13 @@ def parse_rdfxml(rawstr):
         result.parse(s, format='xml')
     return result
 
+
+def parse_jsonld(rawstr):
+    result = Graph()
+    result.parse(data=rawstr, format='json-ld')
+    return result
+
+
 def parse_n3(rawstr):
     result = Graph()
     result.parse(StringIO(rawstr), format='n3',
@@ -39,8 +46,7 @@ def parse_n3(rawstr):
         s, p, o = triple
         real_result.add((torelative(s), torelative(p), torelative(o)))
     return real_result
-              
-    return result
+
 
 def parse(rawstr):
     """
@@ -52,4 +58,7 @@ def parse(rawstr):
     except etree.XMLSyntaxError:
         pass
 
-    return parse_n3(rawstr)
+    if rawstr.lstrip()[:1] == '{':
+        return parse_jsonld(rawstr)
+    else:
+        return parse_n3(rawstr)
