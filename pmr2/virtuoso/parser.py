@@ -6,9 +6,18 @@ from rdflib import URIRef
 from rdflib.graph import Graph
 from rdflib.graph import ConjunctiveGraph
 
+import urlparse
 
+# force urljoin to behave correctly
+urlparse.uses_relative.append('jsonld')
+urlparse.uses_netloc.append('jsonld')
+
+# in theory, both of these prefix are the same but they are mishandled/
+# mismanaged in their own hilariously broken ways, so going to leave
+# them as is.
 n3_prefix = 'rdflibfailsathandlingrelativeirisorurnsoranything://oh/'
-json_ld_prefix = '://fake_json_id_prefix/'
+json_ld_prefix = 'jsonld://rdflib_prefix/'
+
 
 def parse_rdfxml(rawstr):
     tree = etree.parse(StringIO(rawstr))

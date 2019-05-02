@@ -13,29 +13,29 @@ class ParserTestCase(unittest.TestCase):
             with open(join(dirname(testing.__file__), 'data', '0', fn)) as fd:
                 self.r1[fn] = fd.read()
 
-    def assertNoFile(self, graph):
+    def assertNoPrefix(self, graph, prefix='file://'):
         for stmt in graph:
-            self.assertNotIn('file://', stmt[0])
+            self.assertNotIn(prefix, stmt[0])
 
     def test_simple_rdf_parse(self):
         graph = parser.parse(self.r1['simple.rdf'])
         self.assertEqual(len(list(graph)), 1)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
 
     def test_simple_n3_parse(self):
         graph = parser.parse(self.r1['simple.n3'])
         self.assertEqual(len(list(graph)), 2)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
 
     def test_simple_turtle_parse(self):
         graph = parser.parse(self.r1['turtle.ttl'])
         self.assertEqual(len(list(graph)), 14)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
 
     def test_embedded_rdf_parse(self):
         graph = parser.parse(self.r1['embedded.rdf'])
         self.assertEqual(len(list(graph)), 2)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
 
     def test_json_ld(self):
         json_str = '''
@@ -54,7 +54,7 @@ class ParserTestCase(unittest.TestCase):
         '''
         graph = parser.parse(json_str)
         self.assertEqual(len(list(graph)), 1)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
 
     def test_json_ld_graph_multiple(self):
         json_str = '''
@@ -79,4 +79,5 @@ class ParserTestCase(unittest.TestCase):
         '''
         graph = parser.parse(json_str)
         self.assertEqual(len(list(graph)), 2)
-        self.assertNoFile(graph)
+        self.assertNoPrefix(graph)
+        self.assertNoPrefix(graph, 'jsonld:')
