@@ -7,9 +7,8 @@ from rdflib.graph import Graph
 from rdflib.graph import ConjunctiveGraph
 
 
-upstreamneedtolearntoknowwtfisiri = \
-    'rdflibfailsathandlingrelativeirisorurnsoranything://oh/'
-
+n3_prefix = 'rdflibfailsathandlingrelativeirisorurnsoranything://oh/'
+json_ld_prefix = '://fake_json_id_prefix/'
 
 def parse_rdfxml(rawstr):
     tree = etree.parse(StringIO(rawstr))
@@ -19,34 +18,35 @@ def parse_rdfxml(rawstr):
 
     result = Graph()
     for node in nodes:
-        s = StringIO(etree.tostring(node))
-        result.parse(s, format='xml')
+        result.parse(data=etree.tostring(node), format='xml')
     return result
+
+
+def fix_relative_uriref(graph, fake_prefix):
+    def torelative(node):
+        if not isinstance(node, URIRef):
+            return node
+        if node.startswith(fake_prefix):
+            return URIRef(node.replace(fake_prefix, ''))
+        return node
+            
+    corrected_graph = Graph()
+    for triple in graph:
+        s, p, o = triple
+        corrected_graph.add((torelative(s), torelative(p), torelative(o)))
+    return corrected_graph
 
 
 def parse_jsonld(rawstr):
     result = ConjunctiveGraph()
-    result.parse(data=rawstr, format='json-ld')
-    return result
+    result.parse(data=rawstr, format='json-ld', base=json_ld_prefix)
+    return fix_relative_uriref(result, json_ld_prefix)
 
 
 def parse_n3(rawstr):
     result = Graph()
-    result.parse(StringIO(rawstr), format='n3',
-        publicID=upstreamneedtolearntoknowwtfisiri)
-
-    def torelative(node):
-        if not isinstance(node, URIRef):
-            return node
-        if node.startswith(upstreamneedtolearntoknowwtfisiri):
-            return URIRef(node.replace(upstreamneedtolearntoknowwtfisiri, ''))
-        return node
-            
-    real_result = Graph()
-    for triple in result:
-        s, p, o = triple
-        real_result.add((torelative(s), torelative(p), torelative(o)))
-    return real_result
+    result.parse(data=rawstr, format='n3', publicID=n3_prefix)
+    return fix_relative_uriref(result, n3_prefix)
 
 
 def parse(rawstr):
