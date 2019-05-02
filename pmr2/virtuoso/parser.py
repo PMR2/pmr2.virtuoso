@@ -4,6 +4,7 @@ from lxml import etree
 
 from rdflib import URIRef
 from rdflib.graph import Graph
+from rdflib.graph import ConjunctiveGraph
 
 
 upstreamneedtolearntoknowwtfisiri = \
@@ -24,7 +25,7 @@ def parse_rdfxml(rawstr):
 
 
 def parse_jsonld(rawstr):
-    result = Graph()
+    result = ConjunctiveGraph()
     result.parse(data=rawstr, format='json-ld')
     return result
 

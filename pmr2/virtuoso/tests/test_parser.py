@@ -46,3 +46,27 @@ class ParserTestCase(unittest.TestCase):
         '''
         graph = parser.parse(json_str)
         self.assertEqual(len(list(graph)), 1)
+
+    def test_json_ld_graph_multiple(self):
+        json_str = '''
+        {
+            "@context": {
+                "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+                "bqbiol": "http://biomodels.net/biology-qualifiers#"
+            },
+            "@graph": [{
+                "@id": "thing#ca",
+                "bqbiol:isVersionOf": [
+                    {"@id": "http://identifiers.org/obo.go/GO:0005891"}
+                ]
+            }, {
+                "@id": "thing#na",
+                "bqbiol:isVersionOf": [
+                    {"@id": "http://identifiers.org/obo.go/GO:0001518"}
+                ]
+            }]
+        }
+        '''
+        graph = parser.parse(json_str)
+        self.assertEqual(len(list(graph)), 2)
