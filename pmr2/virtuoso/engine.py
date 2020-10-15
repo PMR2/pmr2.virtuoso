@@ -71,7 +71,7 @@ class Engine(object):
                 # assuming the results is in this format.
                 results = [r.values() for r in fa]
             lr.close()
-        except:
+        except Exception:
             logger.error('fail to execute sql', exc_info=1)
         else:
             trans.commit()

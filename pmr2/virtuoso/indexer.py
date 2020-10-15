@@ -1,3 +1,4 @@
+import logging
 import zope.interface
 import zope.component
 
@@ -13,6 +14,8 @@ from pmr2.virtuoso.interfaces import IWorkspaceRDFIndexer
 from pmr2.virtuoso.interfaces import IWorkspaceRDFInfo
 from pmr2.virtuoso import sparql
 from pmr2.virtuoso import parser
+
+logger = logging.getLogger(__name__)
 
 
 class BaseRDFIndexer(object):
@@ -65,9 +68,11 @@ class WorkspaceRDFIndexer(BaseRDFIndexer):
             try:
                 contents = storage.file(p)
                 graph = self._mk_rdfgraph(contents)
-                yield sparql.insert(graph, full_root, p)
-            except:
-                continue
+                for stmt in sparql.insert(graph, full_root, p):
+                    yield stmt
+            except Exception:
+                logger.exception(
+                    'failed to produce import statements for %s', p)
 
 
 @zope.component.adapter(IExposureFileAnnotator)
@@ -84,4 +89,5 @@ class ExposureFileRDFIndexer(BaseRDFIndexer):
         yield sparql.clear(full_root)
 
         graph = self._mk_rdfgraph(self.context.input)
-        yield sparql.insert(graph, full_root)
+        for stmt in sparql.insert(graph, full_root):
+            yield stmt
