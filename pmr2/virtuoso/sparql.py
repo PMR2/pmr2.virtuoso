@@ -14,15 +14,14 @@ iri_replacements = {
 }
 
 def chunk(gen, chunk_size=100):
-    try:
-        while True:
-            cache = []
-            for _ in range(chunk_size):
-                cache.append(next(gen))
-            yield cache
-    except StopIteration:
-        if cache:
-            yield cache
+    def fragment(peeked):
+        yield peeked
+        for _ in xrange(chunk_size - 1):
+            yield next(gen)
+
+    while True:
+        peeked = next(gen)
+        yield fragment(peeked)
 
 def quote_iri(url):
     return urllib.quote(url, safe="%/:=&?~#+!$,;'@()*[]")
