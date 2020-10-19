@@ -1,12 +1,15 @@
 Changelog
 =========
 
-0.7 - ????-??-??
+0.7 - 2020-10-19
 ----------------
 
 * Apply a workaround to ensure parent object is accessible from the
   indexer, to avoid spurious indexing errors.
 * Provide support for JSON-LD.
+* Bump version of python-virutoso to ensure more correct unicode support
+* Implement chunking of sparql inserts to limit the size of the graph
+  being passed in at a time.
 
 0.6 - 2017-06-28
 ----------------
