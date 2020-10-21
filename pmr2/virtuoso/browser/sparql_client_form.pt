@@ -9,6 +9,13 @@
 
   <h1 tal:condition="view/label" class="documentFirstHeading"
       tal:content="view/label | nothing"/>
+  <style>
+  <!--
+  textarea#form-widgets-query {
+    height: 25em;
+  }
+  # -->
+  </style>
 
   <tal:block metal:use-macro="context/@@ploneform-macros/titlelessform">
 
