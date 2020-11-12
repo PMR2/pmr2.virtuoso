@@ -1,6 +1,6 @@
 <p>
-  Any semantic metadata indexed by the underlyign Virtuoso RDF store may
-  be exported from the store in the following formats
+  Any semantic metadata for this resource that was indexed by the Virtuoso
+  RDF store may be exported to the following data formats:
 </p>
 <ul>
   <li><a tal:attributes="href string:${view/view_url}/xml">RDFXML</a></li>
