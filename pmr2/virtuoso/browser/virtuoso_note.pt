@@ -1,3 +1,8 @@
 <p>
-virtuoso note
+  Any semantic metadata indexed by the underlyign Virtuoso RDF store may
+  be exported from the store in the following formats
 </p>
+<ul>
+  <li><a tal:attributes="href string:${view/view_url}/xml">RDFXML</a></li>
+  <li><a tal:attributes="href string:${view/view_url}/json-ld">JSON-LD</a></li>
+</ul>

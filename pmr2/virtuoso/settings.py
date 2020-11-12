@@ -22,8 +22,15 @@ class Settings(Persistent, Contained):
 
     @property
     def source(self):
+        # for standard sqlalchemy access
         return 'virtuoso://%s:%s@%s' % (
             self.user, self.password, self.odbc_source)
+
+    @property
+    def raw_source(self):
+        # for raw odbc access; used by rdflib virtuoso plugin
+        return "DSN=%s;UID=%s;PWD=%s;WideAsUTF16=Y;Charset=UTF-8" % (
+            self.odbc_source, self.user, self.password)
 
 SettingsFactory = settings_factory(
     Settings, 'pmr2_virtuoso', u'Virtuoso Settings')

@@ -1,8 +1,15 @@
 import logging
+from contextlib import contextmanager
+from urlparse import urljoin
 
 import sqlalchemy
 from sqlalchemy.sql import bindparam
 from sqlalchemy.exc import ResourceClosedError
+
+from rdflib.graph import ConjunctiveGraph as Graph
+from rdflib.store import Store
+from rdflib.plugin import get as plugin
+from rdflib.term import URIRef
 
 import zope.component
 import zope.interface
@@ -12,7 +19,11 @@ from Products.CMFCore.utils import getToolByName
 from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.helper import quote_url
 
+Virtuoso = plugin("Virtuoso", Store)
+
 logger = logging.getLogger('pmr2.virtuoso.engine')
+# disable connection logging of credentials at INFO level
+logging.getLogger('virtuoso.vstore').setLevel(logging.WARNING)
 
 
 class Engine(object):
@@ -24,6 +35,8 @@ class Engine(object):
 
     def __init__(self, settings):
         source = settings.source
+        self.raw_source = settings.raw_source
+        self.graph_prefix = settings.graph_prefix
         self._engine = sqlalchemy.create_engine(source)
 
     def importRdf(self, url, graph=None):
@@ -77,3 +90,57 @@ class Engine(object):
             trans.commit()
             return results
         return ['# check logs for errors']
+
+    @contextmanager
+    def virtuoso_store(self):
+        """
+        Access the raw virtuoso store via rdflib
+
+        This is managed via a context manager to better ensure that the
+        store is closed when usage is done, as leaving this open can
+        lock the server from other attempts to access.
+        """
+
+        store = Virtuoso(self.raw_source)
+        try:
+            yield store
+        finally:
+            store.close()
+
+    def get_graph(self, context):
+        """
+        Return a rdflib.Graph from virtuoso the given context from a
+        context provided by the portal.
+        """
+
+        full_root = self.graph_prefix + '/'.join(context.getPhysicalPath())
+        with self.virtuoso_store() as store:
+            results = store.query(
+                u'CONSTRUCT { ?s ?p ?o } FROM <%s> WHERE { ?s ?p ?o }' % (
+                    full_root
+                )
+            )
+
+        return results.graph
+
+
+def absolute_iri(iri, base):
+    """
+    Produce an absolute IRI from the given base.
+    """
+
+    if not isinstance(iri, URIRef):
+        return iri
+    return URIRef(urljoin(base, str(iri)))
+
+
+def absolute_graph(source_graph, base):
+    """
+    Given the graph and a base IRI, join all relative IRIs to the base
+    IRI found in the graph.
+    """
+
+    graph = Graph()
+    for triple in source_graph:
+        graph.add([absolute_iri(item, base) for item in triple])
+    return graph

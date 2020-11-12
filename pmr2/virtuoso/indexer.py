@@ -30,9 +30,6 @@ class BaseRDFIndexer(object):
     def _mk_rdfgraph(self, rdfstr):
         """
         Interim rdf grpah object generation method.
-
-        Should be more agnostic, i.e. include standard/simple RDF
-        serialization formats that are not XML.
         """
 
         return parser.parse(rdfstr)
