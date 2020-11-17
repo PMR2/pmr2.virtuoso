@@ -13,5 +13,7 @@ it to the local item::
     >>> from pmr2.app.settings.interfaces import IPMR2GlobalSettings
     >>> gs = zope.component.getUtility(IPMR2GlobalSettings)
     >>> vs = zope.component.getAdapter(gs, name=u'pmr2_virtuoso')
-    >>> print vs.source
+    >>> print(vs.source)
     virtuoso://dba:dba@VOS
+    >>> print(vs.raw_source)
+    DSN=VOS;UID=dba;PWD=dba;WideAsUTF16=Y;Charset=UTF-8

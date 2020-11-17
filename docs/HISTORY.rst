@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.8 - ????-??-??
+----------------
+
+* Make the SPARQL query box taller
+* Export of the RDF graph captured by Virtuoso for the relevant exposure
+  annotation from Virtuoso via RDFXML and JSON-LD.
+
 0.7 - 2020-10-19
 ----------------
 

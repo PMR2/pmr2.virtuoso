@@ -109,8 +109,8 @@ class Engine(object):
 
     def get_graph(self, context):
         """
-        Return a rdflib.Graph from virtuoso the given context from a
-        context provided by the portal.
+        Return a rdflib.Graph from virtuoso from the provided context
+        object provided by the portal.
         """
 
         full_root = self.graph_prefix + '/'.join(context.getPhysicalPath())
