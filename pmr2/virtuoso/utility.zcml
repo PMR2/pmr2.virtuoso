@@ -1,0 +1,12 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="pmr2.virtuoso">
+
+  <utility
+      provides="pmr2.app.exposure.interfaces.IExposureFileTool"
+      factory=".utility.VirtuosoExport"
+      name="virtuoso_rdf"
+      />
+
+</configure>

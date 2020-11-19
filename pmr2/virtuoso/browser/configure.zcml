@@ -47,6 +47,13 @@
       permission="zope2.View"
       />
 
+  <browser:page
+      for="pmr2.app.exposure.interfaces.IExposure"
+      name="virtuoso_rdf"
+      class=".view.VirtuosoExportView"
+      permission="zope2.View"
+      />
+
   <!-- note view -->
 
   <browser:page

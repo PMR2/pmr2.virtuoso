@@ -18,5 +18,6 @@
 
   <include file="settings.zcml" />
   <include file="subscriber.zcml" />
+  <include file="utility.zcml" />
 
 </configure>

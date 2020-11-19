@@ -107,13 +107,13 @@ class Engine(object):
         finally:
             store.close()
 
-    def get_graph(self, context):
+    def get_graph_from_portal_path(self, path):
         """
-        Return a rdflib.Graph from virtuoso from the provided context
-        object provided by the portal.
+        Return a rdflib.Graph from virtuoso using the provided path to an
+        object that was indexed previously.
         """
 
-        full_root = self.graph_prefix + '/'.join(context.getPhysicalPath())
+        full_root = self.graph_prefix + path
         with self.virtuoso_store() as store:
             results = store.query(
                 u'CONSTRUCT { ?s ?p ?o } FROM <%s> WHERE { ?s ?p ?o }' % (
@@ -122,6 +122,15 @@ class Engine(object):
             )
 
         return results.graph
+
+    def get_graph(self, context):
+        """
+        Return a rdflib.Graph from virtuoso from the provided context
+        object provided by the portal.
+        """
+
+        return self.get_graph_from_portal_path(
+            '/'.join(context.getPhysicalPath()))
 
 
 def absolute_iri(iri, base):
