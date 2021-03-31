@@ -1,16 +1,18 @@
 Changelog
 =========
 
-0.8 - ????-??-??
+0.8 - 2021-03-31
 ----------------
 
-* Make the SPARQL query box taller
+* Make the height of the SPARQL query box taller.
 * Export of the RDF graph captured by Virtuoso for the relevant exposure
   annotation from Virtuoso via RDFXML and JSON-LD.
 * Make available the exposure rdf export as a note, though made more
   prominently available as a tool for the exposure, to better address
   the use case where the metadata is declared as an additional exposure
   file (though likely hidden from navigation).
+* Specify the latest version of sqlalchemy that may be supported (due to
+  limitations with legacy versions of installation tools for Python 2).
 
 0.7 - 2020-10-19
 ----------------
