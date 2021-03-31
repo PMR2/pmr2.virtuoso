@@ -30,7 +30,7 @@ setup(name='pmr2.virtuoso',
           'rdflib-jsonld==0.4.0',
           'virtuoso==0.12.6pmr2',
           'pyodbc==4.0.31b1+pmr',
-          'sqlalchemy>=0.6.0',
+          'sqlalchemy>=0.6.0,<1.3.23',
           'requests>=1.0.0',
       ],
       entry_points="""
