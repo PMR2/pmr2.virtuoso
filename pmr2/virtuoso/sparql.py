@@ -7,8 +7,6 @@ import rdflib
 from pyparsing import ParseException
 from rdflib.plugins.sparql import parser
 
-import pmr2.rdf
-
 iri_replacements = {
     rdflib.URIRef(''): rdflib.URIRef('#'),
 }
@@ -67,13 +65,13 @@ def clear(graph_iri):
     return 'CLEAR GRAPH <%s>' % (quote_iri(graph_iri))
 
 def _add_graph_projection(statement, projection):
-    return re.sub('SELECT', 'SELECT ?' + projection,
-        statement, flags=re.I)
+    return re.sub(r'SELECT( [^ \?]+|)?', 'SELECT\\1 ?' + projection,
+        statement, flags=re.I | re.S)
 
 def _add_graph_graph_pattern(statement, projection):
-    return re.sub('SELECT([^{]*){([^}]*)}',
-        'SELECT ?%s\\1{ GRAPH ?%s {\\2} }' % (projection, projection),
-        statement, flags=re.I)
+    return re.sub('SELECT( [^ \?]+|)?([^{]*){(.*)}',
+        'SELECT\\1 ?%s\\2{ GRAPH ?%s {\\3} }' % (projection, projection),
+        statement, flags=re.I | re.S)
 
 def sanitize_select(statement):
     """

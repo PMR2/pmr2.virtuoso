@@ -268,10 +268,29 @@ class SparqlReconstructionTestCase(unittest.TestCase):
 
     def test_0100_limit(self):
         results = sparql.sanitize_select(
+            'SELECT ?s WHERE { ?s ?p ?o } LIMIT 10'
+        )
+        self.assertEqual(
+            results[1],
+            'SELECT ?%s ?s WHERE { GRAPH ?%s { ?s ?p ?o } } LIMIT 10' % (
+                results[0], results[0])
+        )
+
+    def test_0101_limit(self):
+        results = sparql.sanitize_select(
             'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } LIMIT 10'
         )
         self.assertEqual(results, (
             'g', 'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } LIMIT 10'
+        ))
+
+    def test_0111_order_by(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } ORDER BY ?s'
+        )
+        self.assertEqual(results, (
+            'g',
+            'SELECT ?s ?p ?o ?g WHERE { GRAPH ?g { ?s ?p ?o } } ORDER BY ?s'
         ))
 
     def test_0200_from_named(self):
@@ -298,6 +317,57 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             'FROM NAMED <http://example.com/graph1> '
             'FROM NAMED <http://example.com/graph2> '
             'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        ))
+
+    def test_0300_distinct(self):
+        results = sparql.sanitize_select(
+            'SELECT DISTINCT ?s '
+            'WHERE { ?s ?p ?o }'
+        )
+        self.assertTrue(re.match(
+            'SELECT DISTINCT \\?_g[0-9]* \\?s WHERE { GRAPH \\?_g[0-9]* { '
+            '\\?s \\?p \\?o } }',
+            results[1]
+        ))
+
+    def test_0301_distinct(self):
+        results = sparql.sanitize_select(
+            'SELECT DISTINCT ?s '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        )
+        self.assertEqual(results, (
+            'g',
+            'SELECT DISTINCT ?g ?s '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        ))
+
+    def test_0302_distinct(self):
+        results = sparql.sanitize_select(
+            'SELECT DISTINCT ?g ?s '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        )
+        self.assertEqual(results, (
+            'g',
+            'SELECT DISTINCT ?g ?s '
+            'WHERE { GRAPH ?g { ?s ?p ?o } }'
+        ))
+
+    def test_1000_union(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s '
+            'WHERE { '
+            '    { ?s <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?s <http://example.com/p2> ?o } '
+            '}'
+        )
+        self.assertEqual(results[1], (
+            'SELECT ?%s ?s '
+            'WHERE { GRAPH ?%s { '
+            '    { ?s <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?s <http://example.com/p2> ?o } '
+            '} }' % (results[0], results[0])
         ))
 
     def test_7000_chained(self):
