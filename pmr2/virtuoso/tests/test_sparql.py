@@ -370,6 +370,46 @@ class SparqlReconstructionTestCase(unittest.TestCase):
             '} }' % (results[0], results[0])
         ))
 
+    def test_1010_union(self):
+        results = sparql.sanitize_select(
+            'SELECT ?s '
+            'WHERE { '
+            '    ?s <http://example.com/p1> ?intm . '
+            '    { ?intm <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?intm <http://example.com/p2> ?o } '
+            '}'
+        )
+        self.assertEqual(results[1], (
+            'SELECT ?%s ?s '
+            'WHERE { GRAPH ?%s { '
+            '    ?s <http://example.com/p1> ?intm . '
+            '    { ?intm <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?intm <http://example.com/p2> ?o } '
+            '} }' % (results[0], results[0])
+        ))
+
+    def test_1011_union(self):
+        results = sparql.sanitize_select(
+            'SELECT ?g ?s '
+            'WHERE { GRAPH ?g { '
+            '    ?s <http://example.com/p1> ?intm . '
+            '    { ?intm <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?intm <http://example.com/p2> ?o } '
+            '} }'
+        )
+        self.assertEqual(results, ('g',
+            'SELECT ?g ?s '
+            'WHERE { GRAPH ?g { '
+            '    ?s <http://example.com/p1> ?intm . '
+            '    { ?intm <http://example.com/p1> ?o } '
+            '    UNION '
+            '    { ?intm <http://example.com/p2> ?o } '
+            '} }'
+        ))
+
     def test_7000_chained(self):
         results = sparql.sanitize_select(
             'SELECT ?s ?p ?q WHERE { ?s <http://example.com/type> ?o };'
