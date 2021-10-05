@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.9 - 2021-10-05
+----------------
+
+* Correct the sanitizing of queries that make use of the ``DISTINCT``
+  and ``REDUCED`` keyword.
+* Also adjusted the regex such that it will greedily match across
+  multiple lines to not prematurely match the ``UNION`` query
+  statements.
+
 0.8 - 2021-03-31
 ----------------
 
