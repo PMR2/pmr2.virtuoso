@@ -12,20 +12,6 @@
   </configure>
 
   <browser:page
-      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-      name="pmr2_virtuoso_rdf_import"
-      class=".engine.RdfImportForm"
-      permission="cmf.ManagePortal"
-      />
-
-  <browser:page
-      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-      name="pmr2_virtuoso_execute"
-      class=".engine.SqlExecuteForm"
-      permission="cmf.ManagePortal"
-      />
-
-  <browser:page
       for="pmr2.app.workspace.interfaces.IWorkspace"
       name="rdf_indexer"
       class=".workspace.WorkspaceRDFInfoEditForm"

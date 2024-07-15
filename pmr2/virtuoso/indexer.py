@@ -44,7 +44,7 @@ class BaseRDFIndexer(object):
         engine = zope.component.getAdapter(settings, IEngine)
 
         for stmt in self.sparql_generator(settings.graph_prefix):
-            engine.execute('SPARQL ' + stmt)
+            engine.sparql_execute(stmt)
 
 
 @zope.component.adapter(IWorkspace)

@@ -55,9 +55,11 @@ class ExposureTestCase(unittest.TestCase):
         note = zope.component.getAdapter(context, name='virtuoso_rdf')
 
         self.assertEqual(len(engine.stmts), 2)
-        self.assertEqual(engine.stmts[0], 'SPARQL '
+        self.assertEqual(
+            engine.stmts[0],
             'CLEAR GRAPH <urn:pmr:virtuoso:/plone/'
-                'virtuoso_exposure/virtuoso_test/simple.rdf>')
+                'virtuoso_exposure/virtuoso_test/simple.rdf>'
+        )
 
         self.assertTrue(context.getExcludeFromNav())
 
@@ -100,6 +102,8 @@ class ExposureTestCase(unittest.TestCase):
         note = zope.component.getAdapter(context, name='virtuoso_rdf')
 
         self.assertEqual(len(engine.stmts), 2)
-        self.assertEqual(engine.stmts[0], 'SPARQL '
+        self.assertEqual(
+            engine.stmts[0],
             'CLEAR GRAPH <urn:pmr:virtuoso:/plone/'
-                'virtuoso_exposure/virtuoso_test/simple.rdf>')
+                'virtuoso_exposure/virtuoso_test/simple.rdf>',
+        )

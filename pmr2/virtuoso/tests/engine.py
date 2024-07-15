@@ -16,7 +16,7 @@ class MockEngine(object):
     def __init__(self):
         self._clear()
 
-    def execute(self, stmt):
+    def sparql_execute(self, stmt):
         self.stmts.append(stmt)
 
     def _clear(self):

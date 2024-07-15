@@ -129,5 +129,7 @@ class WorkspaceBrowserTestCase(unittest.TestCase):
         form.update()
 
         self.assertEqual(len(engine.stmts), 2)
-        self.assertEqual(engine.stmts[0], 'SPARQL '
-            'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>')
+        self.assertEqual(
+            engine.stmts[0],
+            'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>'
+        )

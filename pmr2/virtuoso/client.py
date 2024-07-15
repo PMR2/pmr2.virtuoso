@@ -25,7 +25,7 @@ class SparqlClient(object):
         self.requests_session = requests_session
 
     def query(self, sparql_query):
-        r = self.requests_session.get(self.endpoint, params={
+        r = self.requests_session.post(self.endpoint, data={
             'query': sparql_query,
             'format': 'application/json',
         })

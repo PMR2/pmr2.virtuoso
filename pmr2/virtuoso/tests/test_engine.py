@@ -9,49 +9,11 @@ from pmr2.virtuoso import engine
 class Engine(engine.Engine):
 
     def __init__(self, settings):
-        # don't actually instantiate anything.
-        self._engine = DummySQLEngine(self)
         self.graph_prefix = u'urn:pmr:'
-        self.raw_source = 'fakesource'
         self.statements = []
 
-
-class DummySQLEngine(object):
-
-    def __init__(self, parent):
-        self.parent = parent
-
-    def connect(self):
-        return self
-
-    def begin(self):
-        return self
-
-    def commit(self):
-        pass
-
-    def fetchall(self):
-        return []
-
-    def execute(self, stmt):
-        self.parent.statements.append(stmt)
-        return self
-
-
-class DummyVirtuoso(object):
-
-    queries = []
-    result = namedtuple('Result', ['graph'])
-
-    def __init__(self, source):
-        self.source = source
-
-    def query(self, query):
-        self.queries.append(query)
-        return self.result(query)
-
-    def close(self):
-        pass
+    def sparql_execute(self, stmt):
+        self.statements.append(stmt)
 
 
 class Context(object):
@@ -64,51 +26,6 @@ class Context(object):
 
 
 class BaseEngineTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self._virtuoso, engine.Virtuoso = engine.Virtuoso, DummyVirtuoso
-
-    def tearDown(self):
-        engine.Virtuoso = self._virtuoso
-
-    def test_0000_base(self):
-        engine = Engine(None)
-        engine.importRdf('http://example.com/test.rdf')
-        self.assertEqual(engine.statements[0],
-            'sparql load <http://example.com/test.rdf> into graph '
-            '<urn:example:pmr2.virtuoso>')
-
-    def test_0000_base(self):
-        engine = Engine(None)
-        engine.importRdf('http://example.com/test.rdf',
-            'http://graph.example.com/')
-        self.assertEqual(engine.statements[0],
-            'sparql load <http://example.com/test.rdf> into graph '
-            '<http://graph.example.com/>')
-
-    def test_0010_multile_hostile(self):
-        engine = Engine(None)
-        engine.bulkImportRdf([
-            'http://example.com/test.rdf',
-            'http://example.com/test.rdf?parma=12?pwn"> into graph ',
-        ], graph='urn:example:pmr2.virtuoso')
-        self.assertEqual(engine.statements, [
-            'sparql load <http://example.com/test.rdf> into graph '
-            '<urn:example:pmr2.virtuoso>',
-            'sparql load <http://example.com/test.rdf%3Fparma%3D12?'
-            'pwn%22%3E+into+graph+> into graph <urn:example:pmr2.virtuoso>',
-        ])
-
-    def test_0100_get_graph(self):
-        engine = Engine(None)
-        context = Context(['', 'path', 'to', 'object'])
-        result = engine.get_graph(context)
-        # The fake mock is set up to return the query is as.
-        self.assertEqual(
-            result,
-            u'CONSTRUCT { ?s ?p ?o } FROM <urn:pmr:/path/to/object> '
-            'WHERE { ?s ?p ?o }'
-        )
 
     def test_9000_absolute_iri(self):
         literal = Literal(u'a literal')

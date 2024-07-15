@@ -2,14 +2,10 @@ import logging
 from contextlib import contextmanager
 from urlparse import urljoin
 
-import sqlalchemy
-from sqlalchemy.sql import bindparam
-from sqlalchemy.exc import ResourceClosedError
-
 from rdflib.graph import ConjunctiveGraph as Graph
 from rdflib.store import Store
-from rdflib.plugin import get as plugin
 from rdflib.term import URIRef
+import requests
 
 import zope.component
 import zope.interface
@@ -18,8 +14,6 @@ from Products.CMFCore.utils import getToolByName
 
 from pmr2.virtuoso.interfaces import IEngine
 from pmr2.virtuoso.helper import quote_url
-
-Virtuoso = plugin("Virtuoso", Store)
 
 logger = logging.getLogger('pmr2.virtuoso.engine')
 # disable connection logging of credentials at INFO level
@@ -34,78 +28,33 @@ class Engine(object):
     zope.interface.implements(IEngine)
 
     def __init__(self, settings):
-        source = settings.source
-        self.raw_source = settings.raw_source
+        # XXX assumes virtuoso, and has auth endpoint with this suffix
+        self.sparql_endpoint = settings.sparql_endpoint + '-auth'
+        self.requests_auth = settings.requests_auth
         self.graph_prefix = settings.graph_prefix
-        self._engine = sqlalchemy.create_engine(source)
 
-    def importRdf(self, url, graph=None):
-        conn = self._engine.connect()
-        trans = conn.begin()
+    def sparql_execute(self, stmt, mimetype='application/rdf+xml'):
+        session = requests.Session()
+        session.auth = self.requests_auth
+        r = session.post(self.sparql_endpoint, data={
+            'query': stmt,
+            'format': mimetype,
+        })
+        if r.status_code == 200:
+            return r.text
 
-        sqltmpl = 'sparql load <%(source)s>'
-        params = {'source': quote_url(url)}
-        if graph:
-            sqltmpl = 'sparql load <%(source)s> into graph <%(graph)s>'
-            params['graph'] = quote_url(graph)
-
-        sqlstr = sqltmpl % params
-
-        try:
-            lr = conn.execute(sqlstr)
-            fa = lr.fetchall()
-            # assuming the results is in this format.
-            results = [r.values()[0] for r in fa]
-            lr.close()
-        except:
-            logger.error('fail to execute sql', exc_info=1)
-        trans.commit()
-        return results
-
-    def bulkImportRdf(self, urls, graph=None):
-        results = []
-        engine = self._engine
-        for source in urls:
-            r = self.importRdf(source, graph)
-            results.extend(r)
-        return results
-
-    def execute(self, stmt):
-        conn = self._engine.connect()
-        trans = conn.begin()
-
-        try:
-            lr = conn.execute(stmt)
-            try:
-                fa = lr.fetchall()
-            except ResourceClosedError:
-                results = []
-            else:
-                # assuming the results is in this format.
-                results = [r.values() for r in fa]
-            lr.close()
-        except Exception:
-            logger.error('fail to execute sql', exc_info=1)
+        if r.status_code == 401:
+            logger.warn("Virtuoso SPARQL endpoint auth error")
+        elif r.status_code == 400:
+            logger.info("Virtuoso SPARQL execution error: %s", r.text)
+            logger.debug("error executing statement: %r", stmt)
         else:
-            trans.commit()
-            return results
-        return ['# check logs for errors']
+            logger.warn(
+                "Virtuoso SPARQL endpoint unexpected HTTP error code: %s",
+                r.status_code
+            )
 
-    @contextmanager
-    def virtuoso_store(self):
-        """
-        Access the raw virtuoso store via rdflib
-
-        This is managed via a context manager to better ensure that the
-        store is closed when usage is done, as leaving this open can
-        lock the server from other attempts to access.
-        """
-
-        store = Virtuoso(self.raw_source)
-        try:
-            yield store
-        finally:
-            store.close()
+        return None
 
     def get_graph_from_portal_path(self, path):
         """
@@ -114,14 +63,14 @@ class Engine(object):
         """
 
         full_root = self.graph_prefix + path
-        with self.virtuoso_store() as store:
-            results = store.query(
-                u'CONSTRUCT { ?s ?p ?o } FROM <%s> WHERE { ?s ?p ?o }' % (
-                    full_root
-                )
+        rdfxml = self.sparql_execute(
+            u'CONSTRUCT { ?s ?p ?o } FROM <%s> WHERE { ?s ?p ?o }' % (
+                full_root
             )
-
-        return results.graph
+        )
+        graph = Graph()
+        graph.parse(data=rdfxml)
+        return graph
 
     def get_graph(self, context):
         """

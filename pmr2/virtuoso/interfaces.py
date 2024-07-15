@@ -23,15 +23,6 @@ class ISettings(zope.interface.Interface):
         required=False,
     )
 
-    odbc_source = zope.schema.TextLine(
-        title=u'ODBC Source',
-        description=u"The definition for the Virtuoso instance to connect "
-                     "to in odbc.ini.  This is located in $HOME/.odbc.ini or "
-                     "/etc/odbc.ini, or consult your system's documentation.",
-        default=u'VOS',
-        required=False,
-    )
-
     graph_prefix = zope.schema.TextLine(
         title=u'RDF Graph Prefix',
         description=u"The specific urn prefix for this PMR instance applied "
@@ -46,7 +37,7 @@ class ISettings(zope.interface.Interface):
 
     sparql_endpoint = zope.schema.TextLine(
         title=u'SPQRAL Endpoint',
-        description=u"The SPARQL only end point.  May deprecate ODBC access.",
+        description=u"The SPARQL only end point.",
         default=u'http://localhost:8890/sparql',
         required=False,
     )

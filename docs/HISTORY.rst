@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.0 - 2024-07-15
+-------------------
+
+* Removed usage of Virtuoso through pyodbc, and thus sqlalchemy.
+* Write access to Virtuoso is done through the authenticated HTTP
+  endpoint using the previously available credentials.
+
 0.9.1 - 2021-10-05
 ------------------
 

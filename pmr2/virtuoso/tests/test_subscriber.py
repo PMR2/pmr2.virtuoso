@@ -34,13 +34,17 @@ class WorkspaceSubscriberTestCase(unittest.TestCase):
         subscriber.reindex_workspace_rdf(self.context, event)
 
         self.assertEqual(len(self.engine.stmts), 2)
-        self.assertEqual(self.engine.stmts[0], 'SPARQL '
-            u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>')
-        self.assertEqual(' '.join(self.engine.stmts[1].split()), u'SPARQL '
+        self.assertEqual(
+            self.engine.stmts[0],
+            u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>'
+        )
+        self.assertEqual(
+            ' '.join(self.engine.stmts[1].split()),
             u'INSERT INTO <urn:pmr:virtuoso:/plone/workspace/virtuoso_test> { '
                 '<simple.rdf#test> <http://purl.org/dc/elements/1.1/title> '
                     '"Test Node" .'
-            ' }')
+            ' }'
+        )
 
     def test_workspace_rdf_indexer_event(self):
         zope.event.notify(Push(self.context))
@@ -57,5 +61,6 @@ class WorkspaceSubscriberTestCase(unittest.TestCase):
 
         zope.event.notify(Push(self.context))
         # data should be purged and none will be added.
-        self.assertEqual(self.engine.stmts, ['SPARQL '
-            u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>'])
+        self.assertEqual(self.engine.stmts, [
+            u'CLEAR GRAPH <urn:pmr:virtuoso:/plone/workspace/virtuoso_test>'
+        ])
